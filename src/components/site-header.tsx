@@ -120,12 +120,8 @@ export function SiteHeader() {
               </Link>
             ))}
              <div className="border-t pt-4 mt-2 space-y-2">
-                {user ? (
+                {user && (
                    <Link href="#" onClick={() => { signOut(); setIsMenuOpen(false); }} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign Out</Link>
-                ) : (
-                  <>
-                    <Link href="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign In</Link>
-                  </>
                 )}
             </div>
           </nav>
