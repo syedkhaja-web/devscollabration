@@ -69,8 +69,8 @@ export default function ChatbotPage() {
               {messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground p-8">
                   <DevsTecIcon className="h-16 w-16 mb-4" />
-                  <h2 className="text-2xl font-semibold">Welcome to the Devs Tec Chatbot</h2>
-                  <p>Ask me anything about our platform, technology, or collaboration!</p>
+                  <h2 className="text-2xl font-semibold">Welcome to your AI Assistant</h2>
+                  <p>Ask me anything about our platform, technology, or get help with your code.</p>
                 </div>
               )}
               {messages.map((message) => (
