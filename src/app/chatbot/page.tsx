@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bot, Loader2, Send, User } from 'lucide-react';
+import { Bot, Loader2, Send, User, Trash2 } from 'lucide-react';
 import { chat } from '@/ai/flows/chat-flow';
 import type { ChatMessage } from '@/ai/flows/chat-schemas';
 import { nanoid } from 'nanoid';
@@ -50,19 +50,30 @@ export default function ChatbotPage() {
     }
   };
 
+  const handleClearChat = () => {
+    setMessages([]);
+  };
+
   return (
     <div className="flex min-h-dvh flex-col">
       <SiteHeader />
       <main className="flex-1 flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-2xl h-[70vh] flex flex-col rounded-xl border bg-card text-card-foreground shadow-sm">
-            <header className="flex items-center gap-3 p-4 border-b">
-                <Avatar>
-                    <AvatarFallback><Bot /></AvatarFallback>
-                </Avatar>
-                <div>
-                    <h2 className="text-lg font-bold">AI Assistant</h2>
-                    <p className="text-sm text-muted-foreground">Ready to help you with your questions.</p>
+            <header className="flex items-center justify-between p-4 border-b">
+                <div className="flex items-center gap-3">
+                    <Avatar>
+                        <AvatarFallback><Bot /></AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <h2 className="text-lg font-bold">AI Assistant</h2>
+                        <p className="text-sm text-muted-foreground">Ready to help you with your questions.</p>
+                    </div>
                 </div>
+                {messages.length > 0 && (
+                    <Button variant="ghost" size="icon" onClick={handleClearChat} aria-label="Clear Chat">
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
+                )}
             </header>
           <ScrollArea className="flex-1 p-4">
             <div className="space-y-4">
