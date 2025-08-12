@@ -25,7 +25,7 @@ export function SiteHeader() {
     { href: '/', label: 'Home' },
     { href: '/projects', label: 'Projects' },
     { href: '/documentation', label: 'Documentation' },
-    { href: '#', label: 'Blog' },
+    { href: '/blog', label: 'Blog' },
   ];
 
   return (
