@@ -28,42 +28,6 @@ const values = [
 
   const team = [
     {
-      name: 'Alex Rivera',
-      role: 'CEO & Founder',
-      image: 'https://placehold.co/400x400.png',
-      socials: {
-        linkedin: '#',
-        github: '#',
-      },
-    },
-    {
-      name: 'Samantha Chen',
-      role: 'Chief Technology Officer',
-      image: 'https://placehold.co/400x400.png',
-      socials: {
-        linkedin: '#',
-        github: '#',
-      },
-    },
-    {
-      name: 'David Lee',
-      role: 'Lead Designer',
-      image: 'https://placehold.co/400x400.png',
-      socials: {
-        linkedin: '#',
-        github: '#',
-      },
-    },
-     {
-      name: 'Maria Garcia',
-      role: 'Head of Engineering',
-      image: 'https://placehold.co/400x400.png',
-      socials: {
-        linkedin: '#',
-        github: '#',
-      },
-    },
-    {
       name: 'Syed Taqhi',
       role: 'Senior Software Engineer',
       image: 'https://placehold.co/400x400.png',
@@ -73,17 +37,8 @@ const values = [
       },
     },
     {
-      name: 'Faisal',
+      name: 'Md Faisal',
       role: 'Software Engineer',
-      image: 'https://placehold.co/400x400.png',
-      socials: {
-        linkedin: '#',
-        github: '#',
-      },
-    },
-     {
-      name: 'Gemini',
-      role: 'AI Assistant',
       image: 'https://placehold.co/400x400.png',
       socials: {
         linkedin: '#',
@@ -115,7 +70,7 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold text-center mb-12">
               Meet the Team
             </h2>
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2 justify-center">
               {team.map((member) => (
                 <div key={member.name} className="flex flex-col items-center text-center space-y-4">
                   <Image 
