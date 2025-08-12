@@ -4,7 +4,7 @@
 import { SiteHeader } from '@/components/site-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DevsTecIcon } from '@/components/icons';
-import { HeartHandshake, Lightbulb, Users } from 'lucide-react';
+import { HeartHandshake, Lightbulb, Users, Linkedin, Github } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -26,6 +26,49 @@ const values = [
     },
   ];
 
+  const team = [
+    {
+      name: 'Alex Rivera',
+      role: 'CEO & Founder',
+      imageUrl: 'https://placehold.co/400x400.png',
+      imageHint: 'portrait man',
+      socials: {
+        linkedin: '#',
+        github: '#',
+      },
+    },
+    {
+      name: 'Samantha Chen',
+      role: 'Chief Technology Officer',
+      imageUrl: 'https://placehold.co/400x400.png',
+      imageHint: 'portrait woman',
+      socials: {
+        linkedin: '#',
+        github: '#',
+      },
+    },
+    {
+      name: 'David Lee',
+      role: 'Lead Designer',
+      imageUrl: 'https://placehold.co/400x400.png',
+      imageHint: 'portrait designer',
+      socials: {
+        linkedin: '#',
+        github: '#',
+      },
+    },
+     {
+      name: 'Maria Garcia',
+      role: 'Head of Engineering',
+      imageUrl: 'https://placehold.co/400x400.png',
+      imageHint: 'portrait engineer',
+      socials: {
+        linkedin: '#',
+        github: '#',
+      },
+    },
+  ];
+
 export default function AboutPage() {
   return (
     <div className="flex min-h-dvh flex-col">
@@ -43,6 +86,40 @@ export default function AboutPage() {
                 </p>
             </div>
         </section>
+
+        <section className="py-16 md:py-24 bg-secondary">
+          <div className="container">
+            <h2 className="text-3xl font-bold text-center mb-12">
+              Meet the Team
+            </h2>
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+              {team.map((member) => (
+                <div key={member.name} className="flex flex-col items-center text-center">
+                   <div className="relative h-40 w-40 mb-4 rounded-full overflow-hidden border-4 border-primary/50">
+                    <Image
+                      src={member.imageUrl}
+                      alt={`Photo of ${member.name}`}
+                      fill
+                      className="object-cover"
+                      data-ai-hint={member.imageHint}
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold">{member.name}</h3>
+                  <p className="text-primary">{member.role}</p>
+                   <div className="flex gap-4 mt-2">
+                    <Link href={member.socials.linkedin} aria-label={`${member.name}'s LinkedIn`}>
+                      <Linkedin className="h-5 w-5 text-muted-foreground transition-colors hover:text-foreground" />
+                    </Link>
+                    <Link href={member.socials.github} aria-label={`${member.name}'s GitHub`}>
+                      <Github className="h-5 w-5 text-muted-foreground transition-colors hover:text-foreground" />
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
 
         <section className="py-16 md:py-24">
           <div className="container">
