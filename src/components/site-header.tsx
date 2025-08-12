@@ -23,7 +23,7 @@ export function SiteHeader() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '#', label: 'Projects' },
+    { href: '/projects', label: 'Projects' },
     { href: '#', label: 'Documentation' },
     { href: '#', label: 'Blog' },
   ];
