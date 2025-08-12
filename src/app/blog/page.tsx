@@ -17,9 +17,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { PlusCircle, User, Calendar, Loader2 } from 'lucide-react';
+import { PlusCircle, User, Calendar, Loader2, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import { generateImage } from '@/ai/flows/generate-image-flow';
+import { generateBlogPost } from '@/ai/flows/generate-blog-post-flow';
 import { useToast } from "@/hooks/use-toast";
 
 
@@ -65,7 +66,33 @@ export default function BlogPage() {
   const [newPost, setNewPost] = useState<Omit<Post, 'date' | 'imageUrl' | 'imageHint'>>({ title: '', description: '', author: '' });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
   const { toast } = useToast();
+
+  const handleGenerateDescription = async () => {
+    if (!newPost.title) {
+        toast({
+            title: "Title is missing",
+            description: "Please enter a title to generate a description.",
+            variant: "destructive",
+        });
+        return;
+    }
+    setIsGeneratingDescription(true);
+    try {
+        const { description } = await generateBlogPost({ title: newPost.title });
+        setNewPost(prev => ({...prev, description}));
+    } catch (error) {
+        console.error("Failed to generate description:", error);
+        toast({
+          title: "Description Generation Failed",
+          description: "Could not generate a description for the post. Please try again.",
+          variant: "destructive",
+        });
+    } finally {
+        setIsGeneratingDescription(false);
+    }
+  };
 
   const handleAddPost = async () => {
     if (newPost.title && newPost.description && newPost.author) {
@@ -139,18 +166,34 @@ export default function BlogPage() {
                       disabled={isGenerating}
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="description" className="text-right">
+                  <div className="grid grid-cols-4 items-start gap-4">
+                    <Label htmlFor="description" className="text-right pt-2">
                       Description
                     </Label>
-                    <Textarea
-                      id="description"
-                      value={newPost.description}
-                      onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
-                      className="col-span-3"
-                      placeholder="A short summary of your post."
-                      disabled={isGenerating}
-                    />
+                    <div className="col-span-3 space-y-2">
+                        <Textarea
+                          id="description"
+                          value={newPost.description}
+                          onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
+                          placeholder="A short summary of your post."
+                          disabled={isGenerating || isGeneratingDescription}
+                          rows={5}
+                        />
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="w-full" 
+                            onClick={handleGenerateDescription}
+                            disabled={isGenerating || isGeneratingDescription || !newPost.title}
+                        >
+                            {isGeneratingDescription ? (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : (
+                                <Sparkles className="mr-2 h-4 w-4" />
+                            )}
+                            Generate with AI
+                        </Button>
+                    </div>
                   </div>
                    <div className="grid grid-cols-4 items-center gap-4">
                     <Label htmlFor="author" className="text-right">
@@ -167,7 +210,7 @@ export default function BlogPage() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleAddPost} disabled={isGenerating}>
+                  <Button onClick={handleAddPost} disabled={isGenerating || isGeneratingDescription}>
                     {isGenerating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {isGenerating ? 'Publishing...' : 'Publish Post'}
                   </Button>
