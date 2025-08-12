@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { DevsTecIcon } from '@/components/icons';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
-import { Github } from 'lucide-react';
+import { Github, Chrome } from 'lucide-react';
 
 
 export default function LoginPage() {
@@ -56,6 +56,7 @@ export default function LoginPage() {
           </p>
           <div className="mt-8">
             <Button onClick={handleSignIn} className="w-full" size="lg">
+              <Chrome className="mr-2 h-5 w-5" />
               Sign In with Google
             </Button>
           </div>
