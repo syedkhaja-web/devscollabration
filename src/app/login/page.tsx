@@ -3,14 +3,15 @@
 import { Button } from '@/components/ui/button';
 import { DevsTecIcon } from '@/components/icons';
 import Link from 'next/link';
-import dynamic from 'next/dynamic';
-
-const WolfAnimation = dynamic(
-  () => import('@/components/wolf-animation').then((mod) => mod.WolfAnimation),
-  { ssr: false }
-);
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
+  const router = useRouter();
+
+  const handleSignIn = () => {
+    router.push('/');
+  };
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
       <div className="absolute top-4 left-4">
@@ -20,16 +21,16 @@ export default function LoginPage() {
         </Link>
       </div>
       <div className="w-full max-w-sm text-center">
-        <div className="h-64 w-full">
-          <WolfAnimation />
+        <div className="h-64 w-full bg-muted rounded-lg flex items-center justify-center">
+            <p className="text-muted-foreground">3D Animation Placeholder</p>
         </div>
         <h1 className="text-3xl font-bold tracking-tight mt-8">Welcome Back</h1>
         <p className="mt-2 text-muted-foreground">
           Sign in to your account to continue.
         </p>
         <div className="mt-8">
-            <Button asChild className="w-full" size="lg">
-                <Link href="/">Sign In with Google</Link>
+            <Button onClick={handleSignIn} className="w-full" size="lg">
+                Sign In with Google
             </Button>
         </div>
         <p className="mt-6 text-xs text-muted-foreground">
