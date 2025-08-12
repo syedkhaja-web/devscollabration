@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -38,6 +39,11 @@ export function SiteHeader() {
       return names[0][0] + names[1][0];
     }
     return names[0][0];
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsMenuOpen(false);
   };
 
   return (
@@ -155,7 +161,7 @@ export function SiteHeader() {
                         </p>
                       </div>
                     </div>
-                    <Button variant="ghost" onClick={() => { logout(); setIsMenuOpen(false); }}>Sign Out</Button>
+                    <Button variant="ghost" onClick={handleLogout}>Sign Out</Button>
                   </>
                 ) : (
                   <>
