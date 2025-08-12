@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DevsTecIcon } from '@/components/icons';
-import { Menu, Search, X, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, Search, X, LogOut, LayoutDashboard, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -20,7 +20,7 @@ import {
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, signOut, signInWithGoogle } = useAuth();
 
   useEffect(() => {
     const handleResize = () => {
@@ -77,6 +77,8 @@ export function SiteHeader() {
             </div>
           </div>
 
+          {loading && <Loader2 className="h-5 w-5 animate-spin" />}
+          
           {!loading && user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -110,11 +112,11 @@ export function SiteHeader() {
           )}
           {!loading && !user && (
             <div className="hidden md:flex items-center gap-2">
-                 <Button asChild variant="ghost">
-                    <Link href="/login">Sign In</Link>
+                 <Button onClick={signInWithGoogle} variant="ghost">
+                    Sign In
                 </Button>
-                <Button asChild>
-                    <Link href="/login">Sign Up</Link>
+                <Button onClick={signInWithGoogle}>
+                    Sign Up
                 </Button>
             </div>
           )}
@@ -151,10 +153,10 @@ export function SiteHeader() {
                    <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent"><LayoutDashboard className="mr-2 h-4 w-4" />Dashboard</Link>
                   <button onClick={handleSignOut} className="flex w-full items-center rounded-lg p-2 text-base font-medium hover:bg-accent"><LogOut className="mr-2 h-4 w-4" />Sign Out</button>
                 </>
-              ) : !loading ? (
+              ) : !loading && !user ? (
                 <>
-                  <Link href="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign In</Link>
-                  <Link href="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign Up</Link>
+                  <button onClick={() => { signInWithGoogle(); setIsMenuOpen(false); }} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign In</button>
+                  <button onClick={() => { signInWithGoogle(); setIsMenuOpen(false); }} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign Up</button>
                 </>
               ) : null}
             </div>

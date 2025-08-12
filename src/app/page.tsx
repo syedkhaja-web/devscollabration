@@ -9,9 +9,10 @@ import { SiteHeader } from '@/components/site-header';
 import { RepoCard } from '@/components/repo-card';
 import { DevsTecIcon } from '@/components/icons';
 import { useAuth } from '@/hooks/use-auth';
+import { Loader2 } from 'lucide-react';
 
 export default function Home() {
-    const { user, loading } = useAuth();
+    const { user, loading, signInWithGoogle } = useAuth();
 
   const features = [
     {
@@ -57,14 +58,17 @@ export default function Home() {
                 </p>
                 <div className="mt-8 flex justify-center">
                     {loading ? (
-                        <Button size="lg" className="text-lg" disabled>Loading...</Button>
+                        <Button size="lg" className="text-lg" disabled>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Loading...
+                        </Button>
                     ) : user ? (
                         <Button size="lg" asChild className="text-lg">
                           <Link href="/dashboard">Go to Dashboard</Link>
                         </Button>
                     ) : (
-                        <Button size="lg" asChild className="text-lg">
-                          <Link href="/login">Get Started</Link>
+                        <Button size="lg" className="text-lg" onClick={signInWithGoogle}>
+                          Get Started with Google
                         </Button>
                     )}
                 </div>
