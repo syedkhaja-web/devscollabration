@@ -16,34 +16,6 @@ export const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfi
 
 const auth = getAuth(app);
 
-// In a real app, you'd want to configure this in the Firebase console.
-// For this prototyping environment, we'll enable them programmatically.
-async function configureProviders() {
-    const response = await fetch(`http://127.0.0.1:9099/emulator/v1/projects/${firebaseConfig.projectId}/config`, {
-        method: 'GET'
-    });
-    const config = (await response.json());
-
-    let madeChanges = false;
-    if (!config.signIn?.google) {
-        config.signIn.google = {enabled: true, clientId: '', clientSecret: ''};
-        madeChanges = true;
-    }
-
-    if (!config.signIn?.github) {
-        config.signIn.github = {enabled: true, clientId: '', clientSecret: ''};
-        madeChanges = true;
-    }
-
-    if (madeChanges) {
-        await fetch(`http://127.0.0.1:9099/emulator/v1/projects/${firebaseConfig.projectId}/config`, {
-            method: 'PUT',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(config)
-        });
-    }
-}
-
 if (typeof window !== 'undefined') {
     // We only want to run this configuration logic in the browser.
     // And because it's async, we'll wrap it in an immediately-invoked function expression.
@@ -51,11 +23,10 @@ if (typeof window !== 'undefined') {
         try {
             // Connect to the local Auth emulator.
             connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
-            await configureProviders();
             // This persistence is useful for the development environment.
             await setPersistence(auth, inMemoryPersistence);
         } catch (e) {
-            console.error("Could not configure providers", e);
+            console.error("Could not connect to auth emulator", e);
         }
     })();
 }
