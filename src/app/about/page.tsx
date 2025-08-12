@@ -30,6 +30,7 @@ const values = [
     {
       name: 'Alex Rivera',
       role: 'CEO & Founder',
+      image: 'https://placehold.co/400x400.png',
       socials: {
         linkedin: '#',
         github: '#',
@@ -38,6 +39,7 @@ const values = [
     {
       name: 'Samantha Chen',
       role: 'Chief Technology Officer',
+      image: 'https://placehold.co/400x400.png',
       socials: {
         linkedin: '#',
         github: '#',
@@ -46,6 +48,7 @@ const values = [
     {
       name: 'David Lee',
       role: 'Lead Designer',
+      image: 'https://placehold.co/400x400.png',
       socials: {
         linkedin: '#',
         github: '#',
@@ -54,6 +57,34 @@ const values = [
      {
       name: 'Maria Garcia',
       role: 'Head of Engineering',
+      image: 'https://placehold.co/400x400.png',
+      socials: {
+        linkedin: '#',
+        github: '#',
+      },
+    },
+    {
+      name: 'Syed Taqhi',
+      role: 'Senior Software Engineer',
+      image: 'https://placehold.co/400x400.png',
+      socials: {
+        linkedin: '#',
+        github: '#',
+      },
+    },
+    {
+      name: 'Faisal',
+      role: 'Software Engineer',
+      image: 'https://placehold.co/400x400.png',
+      socials: {
+        linkedin: '#',
+        github: '#',
+      },
+    },
+     {
+      name: 'Gemini',
+      role: 'AI Assistant',
+      image: 'https://placehold.co/400x400.png',
       socials: {
         linkedin: '#',
         github: '#',
@@ -86,9 +117,19 @@ export default function AboutPage() {
             </h2>
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
               {team.map((member) => (
-                <div key={member.name} className="flex flex-col items-center text-center space-y-2">
-                  <h3 className="text-xl font-bold">{member.name}</h3>
-                  <p className="text-primary">{member.role}</p>
+                <div key={member.name} className="flex flex-col items-center text-center space-y-4">
+                  <Image 
+                    src={member.image} 
+                    alt={member.name}
+                    data-ai-hint="person"
+                    width={128}
+                    height={128}
+                    className="rounded-full"
+                  />
+                  <div className="space-y-1">
+                    <h3 className="text-xl font-bold">{member.name}</h3>
+                    <p className="text-primary">{member.role}</p>
+                  </div>
                    <div className="flex gap-4 mt-2">
                     <Link href={member.socials.linkedin} aria-label={`${member.name}'s LinkedIn`}>
                       <Linkedin className="h-5 w-5 text-muted-foreground transition-colors hover:text-foreground" />
