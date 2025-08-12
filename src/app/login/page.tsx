@@ -6,9 +6,13 @@ import anime from 'animejs';
 import { Button } from '@/components/ui/button';
 import { DevsTecIcon } from '@/components/icons';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/use-auth';
+import { Github } from 'lucide-react';
+
 
 export default function LoginPage() {
   const router = useRouter();
+  const { signInWithGoogle, user } = useAuth();
 
   useEffect(() => {
     anime.timeline({
@@ -23,9 +27,21 @@ export default function LoginPage() {
     })
   }, []);
 
-  const handleSignIn = () => {
-    router.push('/');
+  const handleSignIn = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error("Sign in failed", error);
+      // You could show a toast notification here
+    }
   };
+
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
+
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4">
@@ -36,7 +52,7 @@ export default function LoginPage() {
         <div className="login-card p-8 rounded-xl bg-card border">
           <h1 className="text-3xl font-bold tracking-tight">Welcome Back</h1>
           <p className="mt-2 text-muted-foreground">
-            Sign in with your Google account to continue.
+            Sign in to continue to Devs Tec.
           </p>
           <div className="mt-8">
             <Button onClick={handleSignIn} className="w-full" size="lg">
