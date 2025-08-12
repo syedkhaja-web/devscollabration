@@ -1,9 +1,10 @@
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import { SiteHeader } from '@/components/site-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AreaChart as AreaChartIcon, BarChart, FileText, GitCommit, Users, Activity } from 'lucide-react';
+import { AreaChart as AreaChartIcon, BarChart, FileText, GitCommit, Users, Activity, Sparkles, Loader2 } from 'lucide-react';
 import {
   ChartContainer,
   ChartTooltip,
@@ -12,6 +13,9 @@ import {
 } from "@/components/ui/chart"
 import dynamic from 'next/dynamic';
 import {Pie as PieRecharts, Cell, PieChart as PieChartRecharts, ResponsiveContainer, Tooltip} from 'recharts'
+import { generateQuote } from '@/ai/flows/generate-quote-flow';
+import { Skeleton } from '@/components/ui/skeleton';
+
 const AreaChart = dynamic(() => import('recharts').then(mod => mod.AreaChart), {
   ssr: false,
 });
@@ -44,6 +48,48 @@ const pieChartData = [
     { name: 'Bugfixes', value: 200, fill: 'hsl(var(--chart-3))' },
     { name: 'Documentation', value: 100, fill: 'hsl(var(--chart-4))' },
 ];
+
+const MotivationalQuote = () => {
+    const [quote, setQuote] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchQuote = async () => {
+            setIsLoading(true);
+            try {
+                const { quote } = await generateQuote();
+                setQuote(quote);
+            } catch (error) {
+                console.error("Failed to generate quote:", error);
+                setQuote("Couldn't generate a quote, but keep up the great work!");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchQuote();
+    }, []);
+
+    return (
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Your Daily Dose of Motivation</CardTitle>
+                <Sparkles className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                {isLoading ? (
+                    <div className="space-y-2 pt-2">
+                        <Skeleton className="h-4 w-[250px]" />
+                        <Skeleton className="h-4 w-[200px]" />
+                    </div>
+                ) : (
+                    <blockquote className="text-lg font-semibold italic">
+                        "{quote}"
+                    </blockquote>
+                )}
+            </CardContent>
+        </Card>
+    );
+};
 
 
 export default function ReportPage() {
@@ -104,6 +150,10 @@ export default function ReportPage() {
                     <p className="text-xs text-muted-foreground">CI/CD passing rate</p>
                   </CardContent>
                 </Card>
+            </div>
+            
+            <div className="mt-8">
+              <MotivationalQuote />
             </div>
 
             <div className="grid gap-8 mt-8 md:grid-cols-2 lg:grid-cols-2">
