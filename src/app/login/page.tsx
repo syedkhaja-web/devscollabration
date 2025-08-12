@@ -4,7 +4,6 @@
 import { Button } from '@/components/ui/button';
 import { DevsTecIcon } from '@/components/icons';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,20 +13,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-4">
-      <Image
-        src="https://placehold.co/1920x1080.png"
-        alt="AI generated wolf"
-        data-ai-hint="wolf ai"
-        fill
-        className="absolute inset-0 z-0 object-cover"
-      />
-      <div className="absolute inset-0 z-10 bg-black/60" />
-      <div className="relative z-20 w-full max-w-sm text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center p-4">
+      <div className="w-full max-w-sm text-center">
         <div className="flex justify-center mb-8">
           <DevsTecIcon className="h-12 w-12 text-primary" />
         </div>
-        <div className="p-8 rounded-lg bg-card/80 backdrop-blur-sm">
+        <div className="p-8 rounded-lg bg-card">
           <h1 className="text-3xl font-bold tracking-tight">Welcome</h1>
           <p className="mt-2 text-muted-foreground">
             Sign in to access the platform.
