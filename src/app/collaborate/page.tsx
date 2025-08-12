@@ -5,7 +5,7 @@ import { SiteHeader } from '@/components/site-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Users, Lightbulb, GitFork, MessageSquare } from 'lucide-react';
+import { Users, Lightbulb, Video } from 'lucide-react';
 import Link from 'next/link';
 
 const projects = [
@@ -87,9 +87,9 @@ export default function CollaboratePage() {
                   </CardContent>
                   <CardFooter className="bg-muted/50 p-4">
                     <Button asChild className="w-full">
-                        <Link href="#">
-                            <MessageSquare className="mr-2 h-4 w-4" />
-                            Join Discussion
+                        <Link href="https://meet.new" target="_blank" rel="noopener noreferrer">
+                            <Video className="mr-2 h-4 w-4" />
+                            Start a Meeting
                         </Link>
                     </Button>
                   </CardFooter>
