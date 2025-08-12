@@ -6,25 +6,10 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { DevsTecIcon } from '@/components/icons';
-import { Menu, Search, X, LogOut, LayoutDashboard, Loader2 } from 'lucide-react';
-import { useAuth } from '@/hooks/use-auth';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useRouter } from 'next/navigation';
-
+import { Menu, Search, X } from 'lucide-react';
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, loading, signOut } = useAuth();
-  const router = useRouter();
-
 
   useEffect(() => {
     const handleResize = () => {
@@ -42,11 +27,6 @@ export function SiteHeader() {
     { href: '#', label: 'Documentation' },
     { href: '#', label: 'Blog' },
   ];
-
-  const handleSignOut = async () => {
-    await signOut();
-    setIsMenuOpen(false);
-  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -81,49 +61,14 @@ export function SiteHeader() {
             </div>
           </div>
 
-          {loading && <Loader2 className="h-5 w-5 animate-spin" />}
-          
-          {!loading && user && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.photoURL ?? ''} alt={user.displayName ?? 'User'} />
-                    <AvatarFallback>{user.displayName?.[0] ?? user.email?.[0]}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user.displayName}</p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {user.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard"><LayoutDashboard className="mr-2 h-4 w-4" />Dashboard</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-          {!loading && !user && (
-            <div className="hidden md:flex items-center gap-2">
-                 <Button asChild variant="ghost">
-                    <Link href="/login">Sign In</Link>
-                </Button>
-                <Button asChild>
-                    <Link href="/login">Sign Up</Link>
-                </Button>
-            </div>
-          )}
+          <div className="hidden md:flex items-center gap-2">
+               <Button asChild variant="ghost">
+                  <Link href="/login">Sign In</Link>
+              </Button>
+              <Button asChild>
+                  <Link href="/login">Sign Up</Link>
+              </Button>
+          </div>
 
 
           <div className="md:hidden">
@@ -152,17 +97,10 @@ export function SiteHeader() {
               </Link>
             ))}
              <div className="border-t pt-4 mt-2 space-y-2">
-              {!loading && user ? (
-                <>
-                   <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent"><LayoutDashboard className="mr-2 h-4 w-4" />Dashboard</Link>
-                  <button onClick={handleSignOut} className="flex w-full items-center rounded-lg p-2 text-base font-medium hover:bg-accent"><LogOut className="mr-2 h-4 w-4" />Sign Out</button>
-                </>
-              ) : !loading && !user ? (
                 <>
                   <Link href="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign In</Link>
                   <Link href="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign Up</Link>
                 </>
-              ) : null}
             </div>
           </nav>
         </div>

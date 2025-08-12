@@ -1,31 +1,11 @@
 
 'use client';
 
-import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
 import { DevsTecIcon } from '@/components/icons';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import Link from 'next/link';
 
 export default function LoginPage() {
-  const { user, loading, signInWithGoogle } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (user) {
-      router.push('/dashboard');
-    }
-  }, [user, router]);
-
-  if (loading || user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
@@ -41,8 +21,8 @@ export default function LoginPage() {
           Sign in to your account to continue.
         </p>
         <div className="mt-8">
-            <Button onClick={signInWithGoogle} className="w-full" size="lg">
-                Sign In with Google
+            <Button asChild className="w-full" size="lg">
+                <Link href="/">Sign In with Google</Link>
             </Button>
         </div>
         <p className="mt-6 text-xs text-muted-foreground">
