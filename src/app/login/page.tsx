@@ -1,12 +1,27 @@
 
 'use client';
 
+import { useEffect } from 'react';
+import anime from 'animejs';
 import { Button } from '@/components/ui/button';
 import { DevsTecIcon } from '@/components/icons';
 import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const router = useRouter();
+
+  useEffect(() => {
+    anime.timeline({
+      easing: 'easeOutExpo',
+    })
+    .add({
+      targets: '.login-card > *',
+      translateY: [20, 0],
+      opacity: [0, 1],
+      duration: 700,
+      delay: anime.stagger(100)
+    })
+  }, []);
 
   const handleSignIn = () => {
     router.push('/');
@@ -18,7 +33,7 @@ export default function LoginPage() {
         <div className="flex justify-center mb-8">
           <DevsTecIcon className="h-12 w-12 text-primary" />
         </div>
-        <div className="p-8 rounded-xl bg-card border">
+        <div className="login-card p-8 rounded-xl bg-card border">
           <h1 className="text-3xl font-bold tracking-tight">Welcome Back</h1>
           <p className="mt-2 text-muted-foreground">
             Sign in with your Google account to continue.

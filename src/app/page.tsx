@@ -42,12 +42,23 @@ export default function Home() {
   ];
 
   useEffect(() => {
+    const timeline = anime.timeline({
+      easing: 'easeOutExpo',
+      duration: 800,
+    });
+
+    timeline.add({
+      targets: '.hero-element',
+      translateY: [20, 0],
+      opacity: [0, 1],
+      delay: anime.stagger(150),
+    });
+
     anime({
       targets: '.feature-card',
       translateY: [50, 0],
       opacity: [0, 1],
-      delay: anime.stagger(100),
-      easing: 'easeOutExpo',
+      delay: anime.stagger(100, {start: 500}),
       duration: 800,
     });
   }, []);
@@ -61,13 +72,13 @@ export default function Home() {
                 className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(to_bottom,white_10%,transparent_90%)]"
             ></div>
             <div className="container relative">
-                <h1 className="text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-400">
+                <h1 className="hero-element text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-400">
                     Where Developers Collaborate
                 </h1>
-                <p className="mt-4 text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto">
+                <p className="hero-element mt-4 text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto">
                     Devs Tec is the ultimate platform for developers to host and review code, manage projects, and build software together.
                 </p>
-                <div className="mt-8 flex justify-center">
+                <div className="hero-element mt-8 flex justify-center">
                     <Button size="lg" className="text-lg" asChild>
                       <Link href="/login">Get Started</Link>
                     </Button>
