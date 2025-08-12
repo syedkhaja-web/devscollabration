@@ -30,8 +30,6 @@ const values = [
     {
       name: 'Alex Rivera',
       role: 'CEO & Founder',
-      imageUrl: 'https://placehold.co/400x400.png',
-      imageHint: 'portrait man',
       socials: {
         linkedin: '#',
         github: '#',
@@ -40,8 +38,6 @@ const values = [
     {
       name: 'Samantha Chen',
       role: 'Chief Technology Officer',
-      imageUrl: 'https://placehold.co/400x400.png',
-      imageHint: 'portrait woman',
       socials: {
         linkedin: '#',
         github: '#',
@@ -50,8 +46,6 @@ const values = [
     {
       name: 'David Lee',
       role: 'Lead Designer',
-      imageUrl: 'https://placehold.co/400x400.png',
-      imageHint: 'portrait designer',
       socials: {
         linkedin: '#',
         github: '#',
@@ -60,8 +54,6 @@ const values = [
      {
       name: 'Maria Garcia',
       role: 'Head of Engineering',
-      imageUrl: 'https://placehold.co/400x400.png',
-      imageHint: 'portrait engineer',
       socials: {
         linkedin: '#',
         github: '#',
@@ -94,16 +86,7 @@ export default function AboutPage() {
             </h2>
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
               {team.map((member) => (
-                <div key={member.name} className="flex flex-col items-center text-center">
-                   <div className="relative h-40 w-40 mb-4 rounded-full overflow-hidden border-4 border-primary/50">
-                    <Image
-                      src={member.imageUrl}
-                      alt={`Photo of ${member.name}`}
-                      fill
-                      className="object-cover"
-                      data-ai-hint={member.imageHint}
-                    />
-                  </div>
+                <div key={member.name} className="flex flex-col items-center text-center space-y-2">
                   <h3 className="text-xl font-bold">{member.name}</h3>
                   <p className="text-primary">{member.role}</p>
                    <div className="flex gap-4 mt-2">
