@@ -18,8 +18,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { PlusCircle, User, Calendar, Loader2, Sparkles } from 'lucide-react';
-import Image from 'next/image';
-import { generateImage } from '@/ai/flows/generate-image-flow';
 import { generateBlogPost } from '@/ai/flows/generate-blog-post-flow';
 import { useToast } from "@/hooks/use-toast";
 
@@ -29,8 +27,6 @@ type Post = {
   description: string;
   author: string;
   date: string;
-  imageUrl: string;
-  imageHint: string;
 };
 
 const initialPosts: Post[] = [
@@ -39,33 +35,27 @@ const initialPosts: Post[] = [
         description: 'A deep dive into the features that make Next.js a powerhouse for modern web development, including Server Components and the App Router.',
         author: 'Jane Doe',
         date: '2024-07-21',
-        imageUrl: 'https://placehold.co/600x400.png',
-        imageHint: 'web development'
     },
     {
         title: 'Mastering Tailwind CSS for Rapid UI Development',
         description: 'Learn how to leverage Tailwind CSS to build beautiful, responsive user interfaces faster than ever before. Includes tips and tricks.',
         author: 'John Smith',
         date: '2024-07-20',
-        imageUrl: 'https://placehold.co/600x400.png',
-        imageHint: 'css framework'
     },
     {
         title: 'The Rise of AI in Collaborative Coding',
         description: 'Exploring how AI-powered tools are changing the way developer teams collaborate, write code, and solve problems.',
         author: 'Alex Johnson',
         date: '2024-07-19',
-        imageUrl: 'https://placehold.co/600x400.png',
-        imageHint: 'ai coding'
     },
 ];
 
 
 export default function BlogPage() {
   const [posts, setPosts] = useState<Post[]>(initialPosts);
-  const [newPost, setNewPost] = useState<Omit<Post, 'date' | 'imageUrl' | 'imageHint'>>({ title: '', description: '', author: '' });
+  const [newPost, setNewPost] = useState<Omit<Post, 'date'>>({ title: '', description: '', author: '' });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
   const { toast } = useToast();
 
@@ -96,33 +86,19 @@ export default function BlogPage() {
 
   const handleAddPost = async () => {
     if (newPost.title && newPost.description && newPost.author) {
-      setIsGenerating(true);
-      try {
-        const { imageDataUri } = await generateImage({ prompt: newPost.title });
-        const today = new Date().toISOString().split('T')[0];
-        
-        setPosts([
-            { 
-              ...newPost, 
-              date: today, 
-              imageUrl: imageDataUri,
-              imageHint: newPost.title
-            }, 
-            ...posts
-          ]);
-        setNewPost({ title: '', description: '', author: '' });
-        setIsDialogOpen(false);
-
-      } catch (error) {
-        console.error("Failed to generate image:", error);
-        toast({
-          title: "Image Generation Failed",
-          description: "Could not generate an image for the post. Please try again.",
-          variant: "destructive",
-        });
-      } finally {
-        setIsGenerating(false);
-      }
+      setIsPublishing(true);
+      const today = new Date().toISOString().split('T')[0];
+      
+      setPosts([
+          { 
+            ...newPost, 
+            date: today, 
+          }, 
+          ...posts
+        ]);
+      setNewPost({ title: '', description: '', author: '' });
+      setIsDialogOpen(false);
+      setIsPublishing(false);
     }
   };
 
@@ -163,7 +139,7 @@ export default function BlogPage() {
                       onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
                       className="col-span-3"
                       placeholder="Your Post Title"
-                      disabled={isGenerating}
+                      disabled={isPublishing}
                     />
                   </div>
                   <div className="grid grid-cols-4 items-start gap-4">
@@ -176,7 +152,7 @@ export default function BlogPage() {
                           value={newPost.description}
                           onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
                           placeholder="A short summary of your post."
-                          disabled={isGenerating || isGeneratingDescription}
+                          disabled={isPublishing || isGeneratingDescription}
                           rows={5}
                         />
                         <Button 
@@ -184,7 +160,7 @@ export default function BlogPage() {
                             size="sm" 
                             className="w-full" 
                             onClick={handleGenerateDescription}
-                            disabled={isGenerating || isGeneratingDescription || !newPost.title}
+                            disabled={isPublishing || isGeneratingDescription || !newPost.title}
                         >
                             {isGeneratingDescription ? (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -205,14 +181,14 @@ export default function BlogPage() {
                       onChange={(e) => setNewPost({ ...newPost, author: e.target.value })}
                       className="col-span-3"
                       placeholder="Author's Name"
-                      disabled={isGenerating}
+                      disabled={isPublishing}
                     />
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleAddPost} disabled={isGenerating || isGeneratingDescription}>
-                    {isGenerating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {isGenerating ? 'Publishing...' : 'Publish Post'}
+                  <Button onClick={handleAddPost} disabled={isPublishing || isGeneratingDescription}>
+                    {isPublishing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {isPublishing ? 'Publishing...' : 'Publish Post'}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -222,15 +198,6 @@ export default function BlogPage() {
           <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
             {posts.map((post, index) => (
               <Card key={index} className="flex flex-col overflow-hidden rounded-xl border transition-all hover:-translate-y-1 hover:shadow-xl hover:border-primary">
-                 <div className="relative h-56 w-full">
-                    <Image
-                        src={post.imageUrl}
-                        alt={post.title}
-                        fill
-                        className="object-cover"
-                        data-ai-hint={post.imageHint}
-                    />
-                </div>
                 <CardHeader>
                   <CardTitle className="text-xl h-16">{post.title}</CardTitle>
                 </CardHeader>
