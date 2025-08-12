@@ -54,17 +54,6 @@ export function SiteHeader() {
         </div>
 
         <div className="flex flex-1 items-center justify-end space-x-2">
-          <div className="w-full flex-1 md:w-auto md:flex-none">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search or jump to..."
-                className="w-full rounded-md bg-muted pl-9 md:w-56 lg:w-80"
-              />
-            </div>
-          </div>
-
           <div className="hidden md:flex items-center gap-2">
                <Button asChild variant="ghost">
                   <Link href="/login">Sign In</Link>

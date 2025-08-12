@@ -100,25 +100,6 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="py-16 md:py-24 text-center">
-            <div className="container">
-                <h2 className="text-3xl font-bold mb-4">Find a Project or Person</h2>
-                <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-                    Search for projects, repositories, or people to collaborate with.
-                </p>
-                <div className="flex max-w-lg mx-auto">
-                    <Input
-                        type="search"
-                        placeholder="Search for anything..."
-                        className="rounded-r-none focus:ring-0 focus:ring-offset-0"
-                    />
-                    <Button type="submit" className="rounded-l-none">
-                        <Search className="h-5 w-5 mr-2" /> Search
-                    </Button>
-                </div>
-            </div>
-        </section>
-
         <section className="py-16 md:py-24">
           <div className="container">
             <h2 className="text-3xl font-bold text-center mb-12">
@@ -138,6 +119,16 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <DevsTecIcon className="h-6 w-6 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Devs Tec, Inc.</p>
+          </div>
+          <div className="flex max-w-lg w-full">
+            <Input
+                type="search"
+                placeholder="Search for anything..."
+                className="rounded-r-none focus:ring-0 focus:ring-offset-0"
+            />
+            <Button type="submit" className="rounded-l-none">
+                <Search className="h-5 w-5" />
+            </Button>
           </div>
           <nav className="flex gap-4 text-sm text-muted-foreground">
             <Link href="/about" className="transition-colors hover:text-foreground">About</Link>
