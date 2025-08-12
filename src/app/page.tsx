@@ -12,7 +12,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { Loader2 } from 'lucide-react';
 
 export default function Home() {
-    const { user, loading, signInWithGoogle } = useAuth();
+    const { user, loading } = useAuth();
 
   const features = [
     {
@@ -67,8 +67,8 @@ export default function Home() {
                           <Link href="/dashboard">Go to Dashboard</Link>
                         </Button>
                     ) : (
-                        <Button size="lg" className="text-lg" onClick={signInWithGoogle}>
-                          Get Started with Google
+                        <Button size="lg" className="text-lg" asChild>
+                          <Link href="/login">Get Started</Link>
                         </Button>
                     )}
                 </div>

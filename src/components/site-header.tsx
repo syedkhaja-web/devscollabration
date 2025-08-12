@@ -17,10 +17,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useRouter } from 'next/navigation';
+
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, loading, signOut, signInWithGoogle } = useAuth();
+  const { user, loading, signOut } = useAuth();
+  const router = useRouter();
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -112,11 +116,11 @@ export function SiteHeader() {
           )}
           {!loading && !user && (
             <div className="hidden md:flex items-center gap-2">
-                 <Button onClick={signInWithGoogle} variant="ghost">
-                    Sign In
+                 <Button asChild variant="ghost">
+                    <Link href="/login">Sign In</Link>
                 </Button>
-                <Button onClick={signInWithGoogle}>
-                    Sign Up
+                <Button asChild>
+                    <Link href="/login">Sign Up</Link>
                 </Button>
             </div>
           )}
@@ -155,8 +159,8 @@ export function SiteHeader() {
                 </>
               ) : !loading && !user ? (
                 <>
-                  <button onClick={() => { signInWithGoogle(); setIsMenuOpen(false); }} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign In</button>
-                  <button onClick={() => { signInWithGoogle(); setIsMenuOpen(false); }} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign Up</button>
+                  <Link href="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign In</Link>
+                  <Link href="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign Up</Link>
                 </>
               ) : null}
             </div>
