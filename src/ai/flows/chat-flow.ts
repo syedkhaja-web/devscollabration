@@ -29,10 +29,6 @@ export const ChatOutputSchema = z.object({
 });
 export type ChatOutput = z.infer<typeof ChatOutputSchema>;
 
-export async function chat(input: ChatInput): Promise<ChatOutput> {
-  return chatFlow(input);
-}
-
 const chatFlow = ai.defineFlow(
   {
     name: 'chatFlow',
@@ -55,3 +51,7 @@ const chatFlow = ai.defineFlow(
     return { response: response.text };
   }
 );
+
+export async function chat(input: ChatInput): Promise<ChatOutput> {
+  return chatFlow(input);
+}
