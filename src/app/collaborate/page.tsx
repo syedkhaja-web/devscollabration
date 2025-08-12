@@ -39,6 +39,9 @@ const projects = [
   },
 ];
 
+const slugify = (text: string) => text.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+
+
 export default function CollaboratePage() {
   return (
     <div className="flex min-h-dvh flex-col">
@@ -65,7 +68,11 @@ export default function CollaboratePage() {
               {projects.map((project, index) => (
                 <Card key={index} className="flex flex-col rounded-xl overflow-hidden h-full border transition-all hover:-translate-y-1 hover:shadow-xl hover:border-primary">
                   <CardHeader>
-                    <CardTitle className="text-xl">{project.title}</CardTitle>
+                    <CardTitle className="text-xl">
+                      <Link href={`/collaborate/${slugify(project.title)}`} className="hover:text-primary transition-colors">
+                        {project.title}
+                      </Link>
+                    </CardTitle>
                     <CardDescription className="pt-2">{project.description}</CardDescription>
                   </CardHeader>
                   <CardContent className="flex-grow space-y-4">
