@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Bot, Loader2, Send, User } from 'lucide-react';
-import { chat, type ChatMessage } from '@/ai/flows/chat-flow';
+import { chat } from '@/ai/flows/chat-flow';
+import type { ChatMessage } from '@/ai/flows/chat-schemas';
 import { nanoid } from 'nanoid';
 import { DevsTecIcon } from '@/components/icons';
 
