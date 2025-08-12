@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { DevsTecIcon } from '@/components/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,8 +22,15 @@ export default function LoginPage() {
         </Link>
       </div>
       <div className="w-full max-w-sm text-center">
-        <div className="h-64 w-full bg-muted rounded-lg flex items-center justify-center">
-            <p className="text-muted-foreground">3D Animation Placeholder</p>
+        <div className="h-64 w-full bg-muted rounded-lg flex items-center justify-center overflow-hidden">
+            <Image 
+              src="https://placehold.co/600x400.png" 
+              alt="Tech background" 
+              width={600}
+              height={400}
+              className="object-cover w-full h-full"
+              data-ai-hint="technology abstract"
+            />
         </div>
         <h1 className="text-3xl font-bold tracking-tight mt-8">Welcome Back</h1>
         <p className="mt-2 text-muted-foreground">
