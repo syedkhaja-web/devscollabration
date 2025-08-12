@@ -49,6 +49,8 @@ if (typeof window !== 'undefined') {
     // And because it's async, we'll wrap it in an immediately-invoked function expression.
     (async () => {
         try {
+            // Connect to the local Auth emulator.
+            connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
             await configureProviders();
             // This persistence is useful for the development environment.
             await setPersistence(auth, inMemoryPersistence);
