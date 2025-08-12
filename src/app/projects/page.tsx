@@ -47,15 +47,20 @@ export default function ProjectsPage() {
 
   useEffect(() => {
     setIsMounted(true);
-    try {
-        const savedProjects = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (savedProjects) {
-            setProjects(JSON.parse(savedProjects));
-        }
-    } catch (error) {
-        console.error("Could not parse projects from localStorage", error);
-    }
   }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+        try {
+            const savedProjects = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (savedProjects) {
+                setProjects(JSON.parse(savedProjects));
+            }
+        } catch (error) {
+            console.error("Could not parse projects from localStorage", error);
+        }
+    }
+  }, [isMounted]);
 
   useEffect(() => {
     if (isMounted) {
@@ -75,21 +80,6 @@ export default function ProjectsPage() {
     setProjects(projects.filter((_, index) => index !== indexToDelete));
   };
 
-  if (!isMounted) {
-    return (
-        <div className="flex min-h-dvh flex-col">
-          <SiteHeader />
-           <main className="flex-1">
-                <div className="container py-8 md:py-12">
-                     <div className="col-span-full text-center py-20 bg-card rounded-lg border-2 border-dashed">
-                        <h2 className="text-xl font-semibold">Loading Projects...</h2>
-                        <p className="text-muted-foreground mt-2">Please wait.</p>
-                    </div>
-                </div>
-           </main>
-        </div>
-    ); 
-  }
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -161,7 +151,12 @@ export default function ProjectsPage() {
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {projects.length > 0 ? (
+             {!isMounted ? (
+                 <div className="col-span-full text-center py-20 bg-card rounded-lg border-2 border-dashed">
+                    <h2 className="text-xl font-semibold">Loading Projects...</h2>
+                    <p className="text-muted-foreground mt-2">Please wait.</p>
+                </div>
+            ) : projects.length > 0 ? (
               projects.map((project, index) => (
                 <Card key={index} className="flex h-full flex-col">
                   <CardHeader>
