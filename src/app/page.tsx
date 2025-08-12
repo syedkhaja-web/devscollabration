@@ -9,6 +9,8 @@ import { SiteHeader } from '@/components/site-header';
 import { RepoCard } from '@/components/repo-card';
 import { DevsTecIcon } from '@/components/icons';
 import { Input } from '@/components/ui/input';
+import { useEffect } from 'react';
+import anime from 'animejs';
 
 export default function Home() {
 
@@ -39,6 +41,17 @@ export default function Home() {
     { name: 'devs-tec-docs', description: 'Official documentation for the Devs Tec platform.', language: 'Markdown', languageColor: '#083fa1', stars: 300, forks: 45, url: '#' },
   ];
 
+  useEffect(() => {
+    anime({
+      targets: '.feature-card',
+      translateY: [50, 0],
+      opacity: [0, 1],
+      delay: anime.stagger(100),
+      easing: 'easeOutExpo',
+      duration: 800,
+    });
+  }, []);
+
   return (
     <div className="flex min-h-dvh flex-col">
       <SiteHeader />
@@ -66,7 +79,7 @@ export default function Home() {
           <div className="container">
             <div className="grid gap-8 md:grid-cols-3">
               {features.map((feature, index) => (
-                <Card key={index} className="flex flex-col items-center text-center p-6 bg-background rounded-xl">
+                <Card key={index} className="feature-card opacity-0 flex flex-col items-center text-center p-6 bg-background rounded-xl">
                   <div className="mb-4">{feature.icon}</div>
                   <CardTitle className="mb-2 text-xl">{feature.title}</CardTitle>
                   <CardDescription>{feature.description}</CardDescription>
