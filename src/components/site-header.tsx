@@ -26,6 +26,7 @@ export function SiteHeader() {
     { href: '/projects', label: 'Projects' },
     { href: '/collaborate', label: 'Collaborate' },
     { href: '/chatbot', label: 'Chatbot' },
+    { href: '/report', label: 'Report' },
     { href: '/documentation', label: 'Documentation' },
     { href: '/blog', label: 'Blog' },
     { href: '/about', label: 'About' },
