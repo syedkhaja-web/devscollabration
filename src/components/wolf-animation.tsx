@@ -3,11 +3,9 @@
 
 import { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
-import * as THREE from 'three';
 
 function Box(props: JSX.IntrinsicElements['mesh']) {
-  const ref = useRef<THREE.Mesh>(null!);
+  const ref = useRef<any>(null!);
   useFrame((state, delta) => {
     if (ref.current) {
       ref.current.rotation.x += delta;
@@ -29,7 +27,6 @@ export function WolfAnimation() {
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
       <Box />
-      <OrbitControls />
     </Canvas>
   );
 }
