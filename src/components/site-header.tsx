@@ -65,7 +65,7 @@ export function SiteHeader() {
 
         <div className="flex flex-1 items-center justify-end space-x-2">
           <div className="hidden md:flex items-center gap-2">
-            {user ? (
+            {user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -90,12 +90,6 @@ export function SiteHeader() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-               
-                 <Button asChild>
-                    <Link href="/login">Sign In</Link>
-                </Button>
-               
             )}
           </div>
 
