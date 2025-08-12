@@ -25,7 +25,7 @@ export function SiteHeader() {
   }, []);
 
   const navLinks = [
-    { href: '#', label: 'Home' },
+    { href: '/', label: 'Home' },
     { href: '#', label: 'Projects' },
     { href: '#', label: 'Documentation' },
     { href: '#', label: 'Blog' },
@@ -155,7 +155,7 @@ export function SiteHeader() {
                         </p>
                       </div>
                     </div>
-                    <Button variant="ghost" onClick={logout}>Sign Out</Button>
+                    <Button variant="ghost" onClick={() => { logout(); setIsMenuOpen(false); }}>Sign Out</Button>
                   </>
                 ) : (
                   <>
