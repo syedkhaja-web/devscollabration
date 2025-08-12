@@ -39,7 +39,7 @@ export function SiteHeader() {
         <div className="flex items-center">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <DevsTecIcon className="h-6 w-6 text-primary" />
-            <span className="hidden font-bold sm:inline-block">Devs Tec</span>
+            <span className="font-bold sm:inline-block">Devs Tec</span>
           </Link>
           <nav className="hidden items-center gap-6 text-sm md:flex">
             {navLinks.map((link) => (

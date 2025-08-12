@@ -5,7 +5,6 @@ import { SiteHeader } from '@/components/site-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DevsTecIcon } from '@/components/icons';
 import { HeartHandshake, Lightbulb, Users, Linkedin, Github } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 
 const values = [
@@ -30,7 +29,6 @@ const values = [
     {
       name: 'Syed Taqhi',
       role: 'Senior Software Engineer',
-      image: 'https://placehold.co/400x400.png',
       socials: {
         linkedin: '#',
         github: '#',
@@ -39,7 +37,6 @@ const values = [
     {
       name: 'Md Faisal',
       role: 'Software Engineer',
-      image: 'https://placehold.co/400x400.png',
       socials: {
         linkedin: '#',
         github: '#',
@@ -73,14 +70,9 @@ export default function AboutPage() {
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2 justify-center">
               {team.map((member) => (
                 <div key={member.name} className="flex flex-col items-center text-center space-y-4">
-                  <Image 
-                    src={member.image} 
-                    alt={member.name}
-                    data-ai-hint="person"
-                    width={128}
-                    height={128}
-                    className="rounded-full"
-                  />
+                    <div className="w-32 h-32 rounded-full bg-muted flex items-center justify-center">
+                        <DevsTecIcon className="w-16 h-16 text-primary" />
+                    </div>
                   <div className="space-y-1">
                     <h3 className="text-xl font-bold">{member.name}</h3>
                     <p className="text-primary">{member.role}</p>
