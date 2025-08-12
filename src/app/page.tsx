@@ -96,7 +96,7 @@ export default function Home() {
             <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Devs Tec, Inc.</p>
           </div>
           <nav className="flex gap-4 text-sm text-muted-foreground">
-            <Link href="#" className="transition-colors hover:text-foreground">About</Link>
+            <Link href="/about" className="transition-colors hover:text-foreground">About</Link>
             <Link href="#" className="transition-colors hover:text-foreground">Contact</Link>
             <Link href="#" className="transition-colors hover:text-foreground">Privacy</Link>
           </nav>
