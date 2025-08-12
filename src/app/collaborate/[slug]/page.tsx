@@ -49,50 +49,53 @@ export default function ProjectDetailPage({ params }: { params: { slug: string }
       <SiteHeader />
       <main className="flex-1">
         {project ? (
-          <div className="container py-12 md:py-20">
-            <div className="mb-8">
-                <Link href="/collaborate" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                    &larr; Back to all projects
-                </Link>
-            </div>
-            <Card className="max-w-4xl mx-auto">
-              <CardHeader>
-                <CardTitle className="text-3xl md:text-4xl">{project.title}</CardTitle>
-                <div className="flex flex-wrap gap-2 pt-4">
-                  {project.tags.map(tag => (
-                    <Badge key={tag} variant="secondary">{tag}</Badge>
-                  ))}
+          <div className="relative py-12 md:py-20">
+             <div className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(to_bottom,white_10%,transparent_90%)] -z-10"></div>
+            <div className="container">
+                <div className="mb-8">
+                    <Link href="/collaborate" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                        &larr; Back to all projects
+                    </Link>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-lg text-muted-foreground mt-2">{project.description}</p>
-                <div className="flex items-center text-muted-foreground gap-6 mt-8">
-                    <div className="flex items-center gap-2">
-                        <Users className="h-5 w-5" />
-                        <span>{project.teamSize} Members</span>
+                <Card className="max-w-4xl mx-auto">
+                  <CardHeader>
+                    <CardTitle className="text-3xl md:text-4xl">{project.title}</CardTitle>
+                    <div className="flex flex-wrap gap-2 pt-4">
+                      {project.tags.map(tag => (
+                        <Badge key={tag} variant="secondary">{tag}</Badge>
+                      ))}
                     </div>
-                    <div className="flex items-center gap-2">
-                        <Lightbulb className="h-5 w-5" />
-                        <span>{project.status}</span>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-lg text-muted-foreground mt-2">{project.description}</p>
+                    <div className="flex items-center text-muted-foreground gap-6 mt-8">
+                        <div className="flex items-center gap-2">
+                            <Users className="h-5 w-5" />
+                            <span>{project.teamSize} Members</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Lightbulb className="h-5 w-5" />
+                            <span>{project.status}</span>
+                        </div>
                     </div>
-                </div>
 
-                <div className="mt-12 border-t pt-8 flex flex-col sm:flex-row gap-4">
-                    <Button asChild className="w-full sm:w-auto" variant="outline">
-                        <Link href="https://vscode.dev/" target="_blank" rel="noopener noreferrer">
-                            <Code className="mr-2 h-4 w-4" />
-                            Open in VS Code
-                        </Link>
-                    </Button>
-                    <Button asChild className="w-full sm:w-auto">
-                        <Link href="https://meet.new" target="_blank" rel="noopener noreferrer">
-                            <Video className="mr-2 h-4 w-4" />
-                            Start a Meeting
-                        </Link>
-                    </Button>
-                </div>
-              </CardContent>
-            </Card>
+                    <div className="mt-12 border-t pt-8 flex flex-col sm:flex-row gap-4">
+                        <Button asChild className="w-full sm:w-auto" variant="outline">
+                            <Link href="https://vscode.dev/" target="_blank" rel="noopener noreferrer">
+                                <Code className="mr-2 h-4 w-4" />
+                                Open in VS Code
+                            </Link>
+                        </Button>
+                        <Button asChild className="w-full sm:w-auto">
+                            <Link href="https://meet.new" target="_blank" rel="noopener noreferrer">
+                                <Video className="mr-2 h-4 w-4" />
+                                Start a Meeting
+                            </Link>
+                        </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+            </div>
           </div>
         ) : (
           <div className="container py-20 text-center">
