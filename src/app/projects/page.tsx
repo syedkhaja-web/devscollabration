@@ -26,10 +26,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { SiteHeader } from '@/components/site-header';
 import { PlusCircle, ExternalLink, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 type Project = {
   name: string;
@@ -152,10 +154,11 @@ export default function ProjectsPage() {
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
              {!isMounted ? (
-                 <div className="col-span-full text-center py-20 bg-card rounded-lg border-2 border-dashed">
-                    <h2 className="text-xl font-semibold">Loading Projects...</h2>
-                    <p className="text-muted-foreground mt-2">Please wait.</p>
-                </div>
+                 <>
+                    <Skeleton className="h-48 w-full" />
+                    <Skeleton className="h-48 w-full" />
+                    <Skeleton className="h-48 w-full" />
+                 </>
             ) : projects.length > 0 ? (
               projects.map((project, index) => (
                 <Card key={index} className="flex h-full flex-col">
@@ -187,7 +190,7 @@ export default function ProjectsPage() {
                           <AlertDialogDescription>
                             This action cannot be undone. This will permanently delete your
                             project from this list.
-                          </Description>
+                          </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
