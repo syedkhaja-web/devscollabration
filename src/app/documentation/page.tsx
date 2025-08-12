@@ -3,7 +3,7 @@
 
 import { SiteHeader } from '@/components/site-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Code, Rocket } from 'lucide-react';
+import { BookOpen, Code, Rocket, MessageSquareQuote } from 'lucide-react';
 
 export default function DocumentationPage() {
   return (
@@ -18,7 +18,7 @@ export default function DocumentationPage() {
             </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-3">
@@ -28,7 +28,7 @@ export default function DocumentationPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  An overview of the platform and a step-by-step guide to setting up your first project.
+                  An overview of the platform and a step-by-step guide to setting up your first project. Now with new tips for a smoother start.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -57,6 +57,20 @@ export default function DocumentationPage() {
               <CardContent>
                 <CardDescription>
                   In-depth tutorials and guides for advanced features and integrations.
+                </CardDescription>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3">
+                  <MessageSquareQuote className="h-6 w-6 text-primary" />
+                  <span>Community Suggestions</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                    Discover tips, tricks, and best practices shared by our vibrant developer community.
                 </CardDescription>
               </CardContent>
             </Card>
