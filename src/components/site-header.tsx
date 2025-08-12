@@ -29,6 +29,7 @@ export function SiteHeader() {
     { href: '/documentation', label: 'Documentation' },
     { href: '/blog', label: 'Blog' },
     { href: '/about', label: 'About' },
+    { href: '/deploy', label: 'Deploy' },
     { href: '/login', label: 'Sign In' },
   ];
 
