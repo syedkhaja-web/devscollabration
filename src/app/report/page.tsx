@@ -8,23 +8,15 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  ChartConfig,
 } from "@/components/ui/chart"
 import dynamic from 'next/dynamic';
-
-const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), {
-  ssr: false,
-});
-
+import {Pie as PieRecharts, Cell, PieChart as PieChartRecharts, ResponsiveContainer, Tooltip} from 'recharts'
 const AreaChart = dynamic(() => import('recharts').then(mod => mod.AreaChart), {
   ssr: false,
 });
 
-const PieChart = dynamic(() => import('recharts').then(mod => mod.PieChart), {
-    ssr: false,
-});
-
 const Area = dynamic(() => import('recharts').then(mod => mod.Area), { ssr: false });
-const Pie = dynamic(() => import('recharts').then(mod => mod.Pie), { ssr: false });
 const CartesianGrid = dynamic(() => import('recharts').then(mod => mod.CartesianGrid), { ssr: false });
 const XAxis = dynamic(() => import('recharts').then(mod => mod.XAxis), { ssr: false });
 const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis), { ssr: false });
@@ -38,6 +30,13 @@ const chartData = [
   { month: "May", desktop: 209 },
   { month: "June", desktop: 214 },
 ];
+
+const chartConfig = {
+  desktop: {
+    label: "Desktop",
+    color: "hsl(var(--chart-1))",
+  },
+} satisfies ChartConfig;
 
 const pieChartData = [
     { name: 'Feature A', value: 400, fill: 'hsl(var(--chart-1))' },
@@ -114,24 +113,29 @@ export default function ReportPage() {
                         <CardDescription>A look at the development pace over the last six months.</CardDescription>
                     </CardHeader>
                     <CardContent className="h-[300px] w-full p-2">
-                        <ResponsiveContainer width="100%" height="100%">
-                             <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                                <defs>
-                                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
-                                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                                    </linearGradient>
-                                </defs>
-                                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12}/>
-                                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                                <ChartTooltip 
-                                    cursor={{fill: 'hsl(var(--accent))'}}
-                                    content={<ChartTooltipContent />} 
+                        <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+                            <AreaChart accessibilityLayer data={chartData} margin={{ left: 12, right: 12, top: 10}}>
+                                <CartesianGrid vertical={false} />
+                                <XAxis
+                                dataKey="month"
+                                tickLine={false}
+                                axisLine={false}
+                                tickMargin={8}
+                                tickFormatter={(value) => value.slice(0, 3)}
                                 />
-                                <Area type="monotone" dataKey="desktop" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#colorUv)" />
+                                <ChartTooltip
+                                    cursor={false}
+                                    content={<ChartTooltipContent indicator="dot" />}
+                                />
+                                <Area
+                                dataKey="desktop"
+                                type="natural"
+                                fill="var(--color-desktop)"
+                                fillOpacity={0.4}
+                                stroke="var(--color-desktop)"
+                                />
                             </AreaChart>
-                        </ResponsiveContainer>
+                        </ChartContainer>
                     </CardContent>
                 </Card>
                 <Card>
@@ -141,9 +145,30 @@ export default function ReportPage() {
                     </CardHeader>
                     <CardContent className="h-[300px] w-full p-2">
                          <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                <Pie 
+                            <PieChartRecharts>
+                                <Tooltip
+                                    content={({ active, payload }) => {
+                                        if (active && payload && payload.length) {
+                                        return (
+                                            <div className="rounded-lg border bg-background p-2 shadow-sm">
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <div className="flex flex-col">
+                                                <span className="text-[0.70rem] uppercase text-muted-foreground">
+                                                    {payload[0].name}
+                                                </span>
+                                                <span className="font-bold text-muted-foreground">
+                                                    {payload[0].value}
+                                                </span>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        )
+                                        }
+
+                                        return null
+                                    }}
+                                />
+                                <PieRecharts 
                                     data={pieChartData} 
                                     dataKey="value" 
                                     nameKey="name" 
@@ -152,8 +177,11 @@ export default function ReportPage() {
                                     outerRadius={100} 
                                     strokeWidth={5}
                                 >
-                                </Pie>
-                            </PieChart>
+                                    {pieChartData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                                    ))}
+                                </PieRecharts>
+                            </PieChartRecharts>
                         </ResponsiveContainer>
                     </CardContent>
                 </Card>
