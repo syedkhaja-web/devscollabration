@@ -13,16 +13,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center p-4">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden p-4">
       <Image
         src="https://placehold.co/1920x1080.png"
         alt="AI generated wolf"
         data-ai-hint="wolf ai"
         fill
-        className="object-cover"
+        className="absolute inset-0 z-0 object-cover"
       />
-      <div className="absolute inset-0 bg-black/60 z-0" />
-      <div className="relative z-10 w-full max-w-sm text-center">
+      <div className="absolute inset-0 z-10 bg-black/60" />
+      <div className="relative z-20 w-full max-w-sm text-center">
         <div className="flex justify-center mb-8">
           <DevsTecIcon className="h-12 w-12 text-primary" />
         </div>
