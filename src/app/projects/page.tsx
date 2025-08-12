@@ -129,9 +129,10 @@ export default function ProjectsPage() {
                 <Card key={index} className="flex h-full flex-col">
                   <CardHeader>
                     <CardTitle>{project.name}</CardTitle>
-                    <CardDescription>{project.description}</CardDescription>
                   </CardHeader>
-                  <CardContent className="flex-grow" />
+                  <CardContent className="flex-grow">
+                    <p className="text-sm text-muted-foreground">{project.description}</p>
+                  </CardContent>
                   <CardFooter className="flex justify-between items-center">
                     <Link
                       href={project.url}
