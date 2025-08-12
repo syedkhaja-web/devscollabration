@@ -9,7 +9,13 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-import { Area, Bar, CartesianGrid, XAxis, YAxis, ResponsiveContainer, Pie, PieChart } from "recharts"
+import { Area, CartesianGrid, XAxis, YAxis, Pie, PieChart } from "recharts"
+import dynamic from 'next/dynamic';
+
+const ResponsiveContainer = dynamic(() => import('recharts').then(mod => mod.ResponsiveContainer), {
+  ssr: false,
+});
+
 
 const chartData = [
   { month: "January", desktop: 186 },
