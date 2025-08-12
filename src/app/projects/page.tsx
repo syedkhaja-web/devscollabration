@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -37,10 +37,31 @@ type Project = {
   url: string;
 };
 
+const LOCAL_STORAGE_KEY = 'my-projects';
+
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [newProject, setNewProject] = useState<Project>({ name: '', description: '', url: '' });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    try {
+        const savedProjects = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (savedProjects) {
+            setProjects(JSON.parse(savedProjects));
+        }
+    } catch (error) {
+        console.error("Could not parse projects from localStorage", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(projects));
+    }
+  }, [projects, isMounted]);
 
   const handleAddProject = () => {
     if (newProject.name && newProject.description && newProject.url) {
@@ -53,6 +74,10 @@ export default function ProjectsPage() {
   const handleDeleteProject = (indexToDelete: number) => {
     setProjects(projects.filter((_, index) => index !== indexToDelete));
   };
+
+  if (!isMounted) {
+    return null; 
+  }
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -155,7 +180,7 @@ export default function ProjectsPage() {
                           <AlertDialogDescription>
                             This action cannot be undone. This will permanently delete your
                             project from this list.
-                          </AlertDialogDescription>
+                          </Description>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
