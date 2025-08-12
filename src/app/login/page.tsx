@@ -1,10 +1,14 @@
-
 'use client';
 
 import { Button } from '@/components/ui/button';
 import { DevsTecIcon } from '@/components/icons';
 import Link from 'next/link';
-import { WolfAnimation } from '@/components/wolf-animation';
+import dynamic from 'next/dynamic';
+
+const WolfAnimation = dynamic(
+  () => import('@/components/wolf-animation').then((mod) => mod.WolfAnimation),
+  { ssr: false }
+);
 
 export default function LoginPage() {
   return (
