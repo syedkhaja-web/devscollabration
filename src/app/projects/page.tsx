@@ -12,12 +12,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { SiteHeader } from '@/components/site-header';
-import { PlusCircle, GitBranch, Star, ExternalLink } from 'lucide-react';
+import { PlusCircle, ExternalLink, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 type Project = {
@@ -37,6 +48,10 @@ export default function ProjectsPage() {
       setNewProject({ name: '', description: '', url: '' });
       setIsDialogOpen(false);
     }
+  };
+
+  const handleDeleteProject = (indexToDelete: number) => {
+    setProjects(projects.filter((_, index) => index !== indexToDelete));
   };
 
   return (
@@ -117,16 +132,38 @@ export default function ProjectsPage() {
                     <CardDescription>{project.description}</CardDescription>
                   </CardHeader>
                   <CardContent className="flex-grow" />
-                  <CardFooter className="flex justify-between items-center text-sm text-muted-foreground">
+                  <CardFooter className="flex justify-between items-center">
                     <Link
                       href={project.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 hover:text-primary transition-colors"
+                      className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors"
                     >
                       <ExternalLink className="h-4 w-4" />
                       View Repository
                     </Link>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete your
+                            project from this list.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDeleteProject(index)}>
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </CardFooter>
                 </Card>
               ))
