@@ -76,7 +76,19 @@ export default function ProjectsPage() {
   };
 
   if (!isMounted) {
-    return null; 
+    return (
+        <div className="flex min-h-dvh flex-col">
+          <SiteHeader />
+           <main className="flex-1">
+                <div className="container py-8 md:py-12">
+                     <div className="col-span-full text-center py-20 bg-card rounded-lg border-2 border-dashed">
+                        <h2 className="text-xl font-semibold">Loading Projects...</h2>
+                        <p className="text-muted-foreground mt-2">Please wait.</p>
+                    </div>
+                </div>
+           </main>
+        </div>
+    ); 
   }
 
   return (
