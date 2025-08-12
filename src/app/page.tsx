@@ -8,10 +8,8 @@ import { GitBranch, Github, Linkedin, Rocket, Twitter, Users } from 'lucide-reac
 import { SiteHeader } from '@/components/site-header';
 import { RepoCard } from '@/components/repo-card';
 import { DevsTecIcon } from '@/components/icons';
-import { useAuth } from '@/hooks/use-auth';
 
 export default function Home() {
-  const { user } = useAuth();
   const features = [
     {
       icon: <Users className="h-10 w-10 text-primary" />,
@@ -55,15 +53,9 @@ export default function Home() {
                     Devs Tec is the ultimate platform for developers to host and review code, manage projects, and build software together.
                 </p>
                 <div className="mt-8 flex justify-center">
-                  {user ? (
                     <Button size="lg" asChild className="text-lg">
-                      <Link href="#">Go to Dashboard</Link>
+                      <Link href="#">Explore Projects</Link>
                     </Button>
-                  ) : (
-                    <Button size="lg" asChild className="text-lg">
-                      <Link href="/login">Get Started</Link>
-                    </Button>
-                  )}
                 </div>
             </div>
         </section>
