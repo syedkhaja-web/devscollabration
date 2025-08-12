@@ -12,7 +12,6 @@ import {
   User,
   signInWithPopup,
   GoogleAuthProvider,
-  GithubAuthProvider,
   signOut as firebaseSignOut,
 } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
@@ -21,7 +20,6 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
-  signInWithGitHub: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -50,17 +48,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const signInWithGitHub = async () => {
-    setLoading(true);
-    try {
-      await signInWithPopup(auth, new GithubAuthProvider());
-    } catch (error) {
-      console.error('Error signing in with GitHub:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const signOut = async () => {
     setLoading(true);
     try {
@@ -72,7 +59,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const value = { user, loading, signInWithGoogle, signInWithGitHub, signOut };
+  const value = { user, loading, signInWithGoogle, signOut };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
