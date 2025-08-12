@@ -30,16 +30,16 @@ const values = [
       name: 'Syed Taqhi',
       role: 'Senior Software Engineer',
       socials: {
-        linkedin: '#',
-        github: '#',
+        linkedin: 'https://www.linkedin.com/',
+        github: 'https://github.com/',
       },
     },
     {
       name: 'Md Faisal',
       role: 'Software Engineer',
       socials: {
-        linkedin: '#',
-        github: '#',
+        linkedin: 'https://www.linkedin.com/',
+        github: 'https://github.com/',
       },
     },
   ];
@@ -78,10 +78,10 @@ export default function AboutPage() {
                     <p className="text-primary">{member.role}</p>
                   </div>
                    <div className="flex gap-4 mt-2">
-                    <Link href={member.socials.linkedin} aria-label={`${member.name}'s LinkedIn`}>
+                    <Link href={member.socials.linkedin} target="_blank" rel="noopener noreferrer" aria-label={`${member.name}'s LinkedIn`}>
                       <Linkedin className="h-5 w-5 text-muted-foreground transition-colors hover:text-foreground" />
                     </Link>
-                    <Link href={member.socials.github} aria-label={`${member.name}'s GitHub`}>
+                    <Link href={member.socials.github} target="_blank" rel="noopener noreferrer" aria-label={`${member.name}'s GitHub`}>
                       <Github className="h-5 w-5 text-muted-foreground transition-colors hover:text-foreground" />
                     </Link>
                   </div>
