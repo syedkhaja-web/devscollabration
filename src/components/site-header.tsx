@@ -91,14 +91,11 @@ export function SiteHeader() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-               <>
-                 <Button asChild variant="ghost">
+               
+                 <Button asChild>
                     <Link href="/login">Sign In</Link>
                 </Button>
-                <Button asChild>
-                    <Link href="/login">Sign Up</Link>
-                </Button>
-               </>
+               
             )}
           </div>
 
@@ -134,7 +131,6 @@ export function SiteHeader() {
                 ) : (
                   <>
                     <Link href="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign In</Link>
-                    <Link href="/login" onClick={() => setIsMenuOpen(false)} className="flex items-center rounded-lg p-2 text-base font-medium hover:bg-accent">Sign Up</Link>
                   </>
                 )}
             </div>

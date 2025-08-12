@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { DevsTecIcon } from '@/components/icons';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
-import { Github, Chrome } from 'lucide-react';
+import { Chrome } from 'lucide-react';
 
 
 export default function LoginPage() {
@@ -50,7 +50,7 @@ export default function LoginPage() {
           <DevsTecIcon className="h-12 w-12 text-primary" />
         </div>
         <div className="login-card p-8 rounded-xl bg-card border">
-          <h1 className="text-3xl font-bold tracking-tight">Welcome Back</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Sign In</h1>
           <p className="mt-2 text-muted-foreground">
             Sign in to continue to Devs Tec.
           </p>
