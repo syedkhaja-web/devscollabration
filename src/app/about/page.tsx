@@ -57,7 +57,7 @@ export default function AboutPage() {
                     Our Mission
                 </h1>
                 <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-                To build the world's most powerful and intuitive platform for developer collaboration, empowering teams to create revolutionary software together.
+                This web application is engineered for developer collaboration.
                 </p>
             </div>
         </section>
