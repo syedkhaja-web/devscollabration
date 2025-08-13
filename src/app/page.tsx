@@ -88,7 +88,7 @@ export default function Home() {
           <div className="container">
             <div className="grid gap-8 md:grid-cols-3">
               {features.map((feature, index) => (
-                <Card key={index} className="feature-card opacity-0 flex flex-col items-center text-center p-6 bg-background rounded-xl">
+                <Card key={index} className="feature-card opacity-0 flex flex-col items-center text-center p-6 bg-background rounded-xl border-2 border-primary/20 shadow-lg shadow-primary/10">
                   <div className="mb-4">{feature.icon}</div>
                   <CardTitle className="mb-2 text-xl">{feature.title}</CardTitle>
                   <CardDescription>{feature.description}</CardDescription>
