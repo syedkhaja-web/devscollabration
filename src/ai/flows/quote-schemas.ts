@@ -10,4 +10,4 @@ import { z } from 'genkit';
 export const GenerateQuoteOutputSchema = z.object({
   quote: z.string().describe('The generated motivational quote.'),
 });
-export type GenerateQuoteOutput = z.infern<typeof GenerateQuoteOutputSchema>;
+export type GenerateQuoteOutput = z.infer<typeof GenerateQuoteOutputSchema>;
