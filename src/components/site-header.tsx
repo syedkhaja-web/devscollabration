@@ -6,9 +6,14 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { DevsTecIcon } from '@/components/icons';
 import { Menu, X } from 'lucide-react';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const handleResize = () => {
@@ -17,10 +22,18 @@ export function SiteHeader() {
       }
     };
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        setUser(currentUser);
+        setLoading(false);
+    });
+
+    return () => {
+        window.removeEventListener('resize', handleResize);
+        unsubscribe();
+    }
   }, []);
 
-  const navLinks = [
+  const baseNavLinks = [
     { href: '/', label: 'Home' },
     { href: '/projects', label: 'Projects' },
     { href: '/collaborate', label: 'Collaborate' },
@@ -30,8 +43,12 @@ export function SiteHeader() {
     { href: '/blog', label: 'Blog' },
     { href: '/about', label: 'About' },
     { href: '/deploy', label: 'Deploy' },
-    { href: '/login', label: 'Sign In' },
   ];
+
+  const navLinks = loading ? [] : user 
+    ? [...baseNavLinks, { href: '/login', label: 'Sign Out' }]
+    : [...baseNavLinks, { href: '/login', label: 'Sign In' }];
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
