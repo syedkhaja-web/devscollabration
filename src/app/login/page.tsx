@@ -42,7 +42,7 @@ export default function LoginPage() {
     } catch (error) {
       console.error("Failed to sign out:", error);
     } finally {
-      // onAuthStateChanged will set loading to false
+      setLoading(false);
     }
   };
 
@@ -85,7 +85,8 @@ export default function LoginPage() {
           <CardContent className="flex flex-col gap-4">
             {user ? (
               <>
-                <Button onClick={handleSignOut} size="lg" variant="outline">
+                <Button onClick={handleSignOut} size="lg" variant="outline" disabled={loading}>
+                  {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Sign Out
                 </Button>
                 <Button asChild size="lg">

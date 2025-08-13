@@ -42,32 +42,30 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    const timeline = anime.timeline({
-      easing: 'easeOutExpo',
-      duration: 800,
-    });
-
-    timeline.add({
+    anime({
       targets: '.hero-element',
-      translateY: [20, 0],
+      translateY: [10, 0],
       opacity: [0, 1],
-      delay: anime.stagger(150),
+      duration: 600,
+      delay: anime.stagger(100),
+      easing: 'easeOutQuad',
     });
 
     anime({
-      targets: '.feature-card',
-      translateY: [50, 0],
-      opacity: [0, 1],
-      delay: anime.stagger(100, {start: 500}),
-      duration: 800,
-    });
+        targets: '.feature-card',
+        translateY: [20, 0],
+        opacity: [0, 1],
+        delay: anime.stagger(100, { start: 300 }),
+        duration: 600,
+        easing: 'easeOutQuad',
+      });
   }, []);
 
   return (
     <div className="flex min-h-dvh flex-col">
       <SiteHeader />
       <main className="flex-1">
-        <section className="relative py-20 md:py-32 lg:py-40 text-center">
+        <section className="relative py-20 md:py-32 lg:py-40 text-center overflow-hidden">
             <div
                 className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(to_bottom,white_10%,transparent_90%)]"
             ></div>

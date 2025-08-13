@@ -18,6 +18,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const AreaChart = dynamic(() => import('recharts').then(mod => mod.AreaChart), {
   ssr: false,
+  loading: () => <Skeleton className="h-[300px] w-full" />,
 });
 
 const Area = dynamic(() => import('recharts').then(mod => mod.Area), { ssr: false });
