@@ -3,7 +3,7 @@
 
 import { SiteHeader } from '@/components/site-header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Terminal, UploadCloud, CheckCircle } from 'lucide-react';
+import { Terminal, UploadCloud, CheckCircle, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
@@ -86,14 +86,22 @@ export default function DeployPage() {
           <div className="text-center mt-16">
             <CheckCircle className="mx-auto h-12 w-12 text-green-500" />
             <h2 className="text-2xl font-bold mt-4">You're All Set!</h2>
-            <p className="text-muted-foreground mt-2">
-              After deployment, you can manage your app in the Firebase Console.
+             <p className="text-muted-foreground mt-2 max-w-xl mx-auto">
+              Once deployed, your application will be live. You can manage your app, view analytics, and set up custom domains in the Firebase Console.
             </p>
-            <Button asChild className="mt-4">
-                <Link href={`https://console.firebase.google.com/project/devs-tec-collab/hosting/main`} target="_blank">
-                    Go to Firebase Console
-                </Link>
-            </Button>
+            <div className="flex flex-wrap justify-center gap-4 mt-6">
+                <Button asChild>
+                    <Link href={`https://devs-tec-collab.web.app`} target="_blank">
+                        <ExternalLink className="mr-2 h-4 w-4" />
+                        View Live Site
+                    </Link>
+                </Button>
+                <Button asChild variant="outline">
+                    <Link href={`https://console.firebase.google.com/project/devs-tec-collab/hosting/main`} target="_blank">
+                        Go to Firebase Console
+                    </Link>
+                </Button>
+            </div>
           </div>
         </div>
       </main>
