@@ -29,6 +29,7 @@ export default function LoginPage() {
       await signInAnonymously(auth);
     } catch (error) {
       console.error("Failed to sign in:", error);
+      console.error("Please ensure Anonymous Sign-In is enabled in your Firebase project's Authentication settings.");
     } finally {
       // onAuthStateChanged will set loading to false
     }
@@ -92,7 +93,8 @@ export default function LoginPage() {
                 </Button>
               </>
             ) : (
-              <Button onClick={handleSignIn} size="lg">
+              <Button onClick={handleSignIn} size="lg" disabled={loading}>
+                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Sign In
               </Button>
             )}
