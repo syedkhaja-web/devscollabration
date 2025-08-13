@@ -7,15 +7,16 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { GenerateQuoteOutputSchema, type GenerateQuoteOutput } from './quote-schemas';
+import { GenerateQuoteInputSchema, GenerateQuoteOutputSchema, type GenerateQuoteOutput } from './quote-schemas';
 
 export async function generateQuote(): Promise<GenerateQuoteOutput> {
-  return generateQuoteFlow();
+  return generateQuoteFlow({});
 }
 
 const generateQuoteFlow = ai.defineFlow(
   {
     name: 'generateQuoteFlow',
+    inputSchema: GenerateQuoteInputSchema,
     outputSchema: GenerateQuoteOutputSchema,
   },
   async () => {
