@@ -15,10 +15,12 @@ export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [clientLoaded, setClientLoaded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
+    setClientLoaded(true);
     const handleResize = () => {
       if (window.innerWidth >= 768) {
         setIsMenuOpen(false);
@@ -56,7 +58,7 @@ export function SiteHeader() {
   const navLinks = loading ? [] : baseNavLinks;
   
   const AuthButton = () => {
-    if (loading) return null;
+    if (loading || !clientLoaded) return null;
 
     if (user) {
       return (
