@@ -10,11 +10,13 @@ import { DevsTecIcon } from '@/components/icons';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, signInAnonymously, signOut, User } from 'firebase/auth';
 import { Loader2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function LoginPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -28,9 +30,21 @@ export default function LoginPage() {
     setActionLoading(true);
     try {
       await signInAnonymously(auth);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to sign in:", error);
-      console.error("Please ensure Anonymous Sign-In is enabled in your Firebase project's Authentication settings.");
+      if (error.code === 'auth/admin-restricted-operation') {
+        toast({
+            title: "Sign-In Failed",
+            description: "Anonymous Sign-In is not enabled in the Firebase Console.",
+            variant: "destructive",
+        });
+      } else {
+        toast({
+            title: "Sign-In Failed",
+            description: "An unexpected error occurred. Please try again.",
+            variant: "destructive",
+        });
+      }
     } finally {
       setActionLoading(false);
     }
