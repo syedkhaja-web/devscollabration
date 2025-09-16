@@ -1,6 +1,14 @@
 # Settings to manage and configure a Firebase App Hosting backend.
 # https://firebase.google.com/docs/app-hosting/configure
 
+# To connect your GitHub repository for automated deployments,
+# go to your project in the Firebase Console -> App Hosting.
+# Firebase will guide you through the process.
+#
+# Replace <OWNER>/<REPO> with your actual GitHub repository details.
+github:
+  repository: <OWNER>/<REPO>
+
 runConfig:
   # Increase this value if you'd like to automatically spin up
   # more instances in response to increased traffic.
