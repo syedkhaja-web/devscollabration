@@ -61,7 +61,6 @@ export default function Home() {
           delay: anime.stagger(100)
         }, '-=600');
     
-    // No cleanup function needed for this simple animation
   }, []);
 
   return (
@@ -70,10 +69,10 @@ export default function Home() {
       <main className="flex-1">
         <section className="relative py-20 md:py-32 lg:py-40 text-center overflow-hidden">
             <div
-                className="absolute inset-0 bg-grid-white/[0.05] [mask-image:linear-gradient(to_bottom,white_10%,transparent_90%)]"
+                className="absolute inset-0 bg-grid-black/[0.05] dark:bg-grid-white/[0.05] [mask-image:linear-gradient(to_bottom,white_10%,transparent_90%)]"
             ></div>
             <div className="container relative">
-                <h1 className="hero-element text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-400">
+                <h1 className="hero-element text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-800 to-black dark:from-white dark:to-neutral-400">
                     Where Developers Collaborate
                 </h1>
                 <p className="hero-element mt-4 text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto">
@@ -91,7 +90,7 @@ export default function Home() {
           <div className="container">
             <div className="grid gap-8 md:grid-cols-3">
               {features.map((feature, index) => (
-                <Card key={index} className="feature-card opacity-0 flex flex-col items-center text-center p-6 bg-background rounded-xl border-2 border-primary/20 shadow-lg shadow-primary/10">
+                <Card key={index} className="feature-card opacity-0 flex flex-col items-center text-center p-6 bg-card rounded-xl border-2 border-primary/20 shadow-lg shadow-primary/10">
                   <div className="mb-4">{feature.icon}</div>
                   <CardTitle className="mb-2 text-xl">{feature.title}</CardTitle>
                   <CardDescription>{feature.description}</CardDescription>
