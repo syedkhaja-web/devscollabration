@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -21,7 +21,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -45,42 +44,38 @@ export default function ProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [newProject, setNewProject] = useState<Project>({ name: '', description: '', url: '' });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsMounted(true);
+    try {
+      const savedProjects = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (savedProjects) {
+        setProjects(JSON.parse(savedProjects));
+      }
+    } catch (error) {
+      console.error("Could not parse projects from localStorage", error);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    if (isMounted) {
-        try {
-            const savedProjects = localStorage.getItem(LOCAL_STORAGE_KEY);
-            if (savedProjects) {
-                setProjects(JSON.parse(savedProjects));
-            }
-        } catch (error) {
-            console.error("Could not parse projects from localStorage", error);
-        }
-    }
-  }, [isMounted]);
-
-  useEffect(() => {
-    if (isMounted) {
+    if (!isLoading) {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(projects));
     }
-  }, [projects, isMounted]);
+  }, [projects, isLoading]);
 
   const handleAddProject = () => {
     if (newProject.name && newProject.description && newProject.url) {
-      setProjects([...projects, newProject]);
+      setProjects(prevProjects => [...prevProjects, newProject]);
       setNewProject({ name: '', description: '', url: '' });
       setIsDialogOpen(false);
     }
   };
 
-  const handleDeleteProject = (indexToDelete: number) => {
-    setProjects(projects.filter((_, index) => index !== indexToDelete));
-  };
+  const handleDeleteProject = useCallback((indexToDelete: number) => {
+    setProjects(prevProjects => prevProjects.filter((_, index) => index !== indexToDelete));
+  }, []);
 
 
   return (
@@ -120,8 +115,8 @@ export default function ProjectsPage() {
                       placeholder="My Awesome Project"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="description" className="text-right">
+                  <div className="grid grid-cols-4 items-start gap-4">
+                    <Label htmlFor="description" className="text-right pt-2">
                       Description
                     </Label>
                     <Textarea
@@ -153,12 +148,10 @@ export default function ProjectsPage() {
           </div>
 
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-             {!isMounted ? (
-                 <>
-                    <Skeleton className="h-48 w-full" />
-                    <Skeleton className="h-48 w-full" />
-                    <Skeleton className="h-48 w-full" />
-                 </>
+             {isLoading ? (
+                 Array.from({ length: 3 }).map((_, index) => (
+                    <Skeleton key={index} className="h-48 w-full" />
+                 ))
             ) : projects.length > 0 ? (
               projects.map((project, index) => (
                 <Card key={index} className="flex h-full flex-col">

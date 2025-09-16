@@ -58,8 +58,8 @@ const MotivationalQuote = () => {
         const fetchQuote = async () => {
             setIsLoading(true);
             try {
-                const { quote } = await generateQuote();
-                setQuote(quote);
+                const result = await generateQuote();
+                setQuote(result.quote);
             } catch (error) {
                 console.error("Failed to generate quote:", error);
                 setQuote("Couldn't generate a quote, but keep up the great work!");
@@ -78,12 +78,11 @@ const MotivationalQuote = () => {
             </CardHeader>
             <CardContent>
                 {isLoading ? (
-                    <div className="space-y-2 pt-2">
-                        <Skeleton className="h-4 w-[250px]" />
-                        <Skeleton className="h-4 w-[200px]" />
-                    </div>
+                     <div className="pt-2">
+                        <Skeleton className="h-5 w-3/4" />
+                     </div>
                 ) : (
-                    <blockquote className="text-lg font-semibold italic">
+                    <blockquote className="text-lg font-semibold italic pt-2">
                         "{quote}"
                     </blockquote>
                 )}

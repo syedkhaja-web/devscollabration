@@ -42,23 +42,26 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    anime({
-      targets: '.hero-element',
-      translateY: [10, 0],
-      opacity: [0, 1],
-      duration: 600,
-      delay: anime.stagger(100),
-      easing: 'easeOutQuad',
-    });
-
-    anime({
-        targets: '.feature-card',
-        translateY: [20, 0],
-        opacity: [0, 1],
-        delay: anime.stagger(100, { start: 300 }),
-        duration: 600,
-        easing: 'easeOutQuad',
+    const animation = anime.timeline({
+        easing: 'easeOutExpo',
+        duration: 800
       });
+  
+      animation
+        .add({
+          targets: '.hero-element',
+          translateY: [20, 0],
+          opacity: [0, 1],
+          delay: anime.stagger(150)
+        })
+        .add({
+          targets: '.feature-card',
+          translateY: [20, 0],
+          opacity: [0, 1],
+          delay: anime.stagger(100)
+        }, '-=600');
+    
+    return () => animation.pause();
   }, []);
 
   return (
