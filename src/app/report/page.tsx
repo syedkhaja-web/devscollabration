@@ -24,8 +24,6 @@ const AreaChart = dynamic(() => import('recharts').then(mod => mod.AreaChart), {
 const Area = dynamic(() => import('recharts').then(mod => mod.Area), { ssr: false });
 const CartesianGrid = dynamic(() => import('recharts').then(mod => mod.CartesianGrid), { ssr: false });
 const XAxis = dynamic(() => import('recharts').then(mod => mod.XAxis), { ssr: false });
-const YAxis = dynamic(() => import('recharts').then(mod => mod.YAxis), { ssr: false });
-
 
 const chartData = [
   { month: "January", desktop: 186 },

@@ -5,15 +5,18 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { DevsTecIcon } from '@/components/icons';
-import { Menu, X } from 'lucide-react';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { Menu, X, LogOut, LogIn } from 'lucide-react';
+import { onAuthStateChanged, User, signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import { usePathname, useRouter } from 'next/navigation';
 
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const handleResize = () => {
@@ -33,6 +36,11 @@ export function SiteHeader() {
     }
   }, []);
 
+  const handleSignOut = async () => {
+    await signOut(auth);
+    router.push('/login');
+  };
+
   const baseNavLinks = [
     { href: '/', label: 'Home' },
     { href: '/projects', label: 'Projects' },
@@ -45,9 +53,31 @@ export function SiteHeader() {
     { href: '/deploy', label: 'Deploy' },
   ];
 
-  const navLinks = loading ? [] : user 
-    ? [...baseNavLinks, { href: '/login', label: 'Sign Out' }]
-    : [...baseNavLinks, { href: '/login', label: 'Sign In' }];
+  const navLinks = loading ? [] : baseNavLinks;
+  
+  const AuthButton = () => {
+    if (loading) return null;
+
+    if (user) {
+      return (
+        <Button variant="ghost" size="sm" onClick={handleSignOut}>
+          <LogOut className="mr-2" />
+          Sign Out
+        </Button>
+      )
+    }
+    // Don't show sign-in button on the login page itself
+    if (pathname === '/login') return null;
+    
+    return (
+      <Button asChild variant="ghost" size="sm">
+        <Link href="/login">
+          <LogIn className="mr-2" />
+          Sign In
+        </Link>
+      </Button>
+    )
+  }
 
 
   return (
@@ -63,7 +93,7 @@ export function SiteHeader() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="transition-colors hover:text-foreground/80 text-foreground/60"
+                className={`transition-colors hover:text-foreground/80 ${pathname === link.href ? 'text-foreground' : 'text-foreground/60'}`}
               >
                 {link.label}
               </Link>
@@ -72,6 +102,9 @@ export function SiteHeader() {
         </div>
 
         <div className="flex flex-1 items-center justify-end space-x-2">
+          <div className="hidden md:flex">
+             <AuthButton />
+          </div>
           <div className="md:hidden">
             <Button
               variant="ghost"
@@ -97,6 +130,9 @@ export function SiteHeader() {
                 {link.label}
               </Link>
             ))}
+            <div className="border-t pt-2 mt-2">
+               <AuthButton />
+            </div>
           </nav>
         </div>
       )}

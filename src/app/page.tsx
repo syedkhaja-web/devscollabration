@@ -61,7 +61,7 @@ export default function Home() {
           delay: anime.stagger(100)
         }, '-=600');
     
-    return () => animation.pause();
+    // No cleanup function needed for this simple animation
   }, []);
 
   return (

@@ -14,6 +14,7 @@ import { Loader2 } from 'lucide-react';
 export default function LoginPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -24,25 +25,25 @@ export default function LoginPage() {
   }, []);
 
   const handleSignIn = async () => {
-    setLoading(true);
+    setActionLoading(true);
     try {
       await signInAnonymously(auth);
     } catch (error) {
       console.error("Failed to sign in:", error);
       console.error("Please ensure Anonymous Sign-In is enabled in your Firebase project's Authentication settings.");
     } finally {
-      // onAuthStateChanged will set loading to false
+      setActionLoading(false);
     }
   };
 
   const handleSignOut = async () => {
-    setLoading(true);
+    setActionLoading(true);
     try {
       await signOut(auth);
     } catch (error) {
       console.error("Failed to sign out:", error);
     } finally {
-      setLoading(false);
+      setActionLoading(false);
     }
   };
 
@@ -85,8 +86,8 @@ export default function LoginPage() {
           <CardContent className="flex flex-col gap-4">
             {user ? (
               <>
-                <Button onClick={handleSignOut} size="lg" variant="outline" disabled={loading}>
-                  {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                <Button onClick={handleSignOut} size="lg" variant="outline" disabled={actionLoading}>
+                  {actionLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Sign Out
                 </Button>
                 <Button asChild size="lg">
@@ -94,8 +95,8 @@ export default function LoginPage() {
                 </Button>
               </>
             ) : (
-              <Button onClick={handleSignIn} size="lg" disabled={loading}>
-                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              <Button onClick={handleSignIn} size="lg" disabled={actionLoading}>
+                {actionLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Sign In
               </Button>
             )}

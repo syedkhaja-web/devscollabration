@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Devs Tec Collab',
     description: 'The ultimate platform for developers to host and review code, manage projects, and build software together.',
-    images: ['httpshttps://placehold.co/1200x630.png'], // Replace with a link to your logo or a featured image
+    images: ['https://placehold.co/1200x630.png'], // Replace with a link to your logo or a featured image
   },
 };
 

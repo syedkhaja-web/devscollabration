@@ -47,20 +47,24 @@ export default function ProjectsPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    try {
-      const savedProjects = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (savedProjects) {
-        setProjects(JSON.parse(savedProjects));
+    // Ensure this code only runs on the client
+    if (typeof window !== 'undefined') {
+      try {
+        const savedProjects = localStorage.getItem(LOCAL_STORAGE_KEY);
+        if (savedProjects) {
+          setProjects(JSON.parse(savedProjects));
+        }
+      } catch (error) {
+        console.error("Could not parse projects from localStorage", error);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Could not parse projects from localStorage", error);
-    } finally {
-      setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if (!isLoading) {
+    // Ensure this code only runs on the client
+    if (typeof window !== 'undefined' && !isLoading) {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(projects));
     }
   }, [projects, isLoading]);
