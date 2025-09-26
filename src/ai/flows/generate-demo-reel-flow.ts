@@ -63,20 +63,29 @@ const generateDemoReelFlow = ai.defineFlow(
 
     for (const prompt of prompts) {
       let operation;
-      try {
-          const result = await ai.generate({
-            model: googleAI.model('veo-3.0-generate-preview'),
-            prompt: prompt,
-            config: {
-              aspectRatio: '16:9',
-            },
-          });
-          operation = result.operation;
-      } catch (e: any) {
-        if (e.message && e.message.includes("429")) {
-             throw new Error("Rate limit exceeded. Please wait a few moments before trying again.");
+      let retries = 3;
+      let success = false;
+
+      while (retries > 0 && !success) {
+        try {
+            const result = await ai.generate({
+              model: googleAI.model('veo-3.0-generate-preview'),
+              prompt: prompt,
+              config: {
+                aspectRatio: '16:9',
+              },
+            });
+            operation = result.operation;
+            success = true;
+        } catch (e: any) {
+          if (e.message && e.message.includes("429") && retries > 1) {
+              console.log("Rate limit hit, retrying in 10 seconds...");
+              await new Promise(resolve => setTimeout(resolve, 10000));
+              retries--;
+          } else {
+            throw e; // Re-throw other errors or if no retries left
+          }
         }
-        throw e; // Re-throw other errors
       }
 
 
