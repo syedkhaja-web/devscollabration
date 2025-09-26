@@ -53,6 +53,7 @@ export function SiteHeader() {
     { href: '/blog', label: 'Blog' },
     { href: '/about', label: 'About' },
     { href: '/deploy', label: 'Deploy' },
+    { href: '/reel', label: 'Demo Reel' },
   ];
 
   const navLinks = loading ? [] : baseNavLinks;
