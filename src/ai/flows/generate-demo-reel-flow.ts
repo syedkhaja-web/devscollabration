@@ -62,13 +62,23 @@ const generateDemoReelFlow = ai.defineFlow(
     const videoUrls: string[] = [];
 
     for (const prompt of prompts) {
-      let { operation } = await ai.generate({
-        model: googleAI.model('veo-3.0-generate-preview'),
-        prompt: prompt,
-        config: {
-          aspectRatio: '16:9',
-        },
-      });
+      let operation;
+      try {
+          const result = await ai.generate({
+            model: googleAI.model('veo-3.0-generate-preview'),
+            prompt: prompt,
+            config: {
+              aspectRatio: '16:9',
+            },
+          });
+          operation = result.operation;
+      } catch (e: any) {
+        if (e.message && e.message.includes("429")) {
+             throw new Error("Rate limit exceeded. Please wait a few moments before trying again.");
+        }
+        throw e; // Re-throw other errors
+      }
+
 
       if (!operation) {
         throw new Error('Expected the model to return an operation');
