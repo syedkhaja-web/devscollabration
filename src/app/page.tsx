@@ -76,7 +76,7 @@ export default function Home() {
                     Where Developers Collaborate
                 </h1>
                 <p className="hero-element mt-4 text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto">
-                    Devs Tec is the ultimate platform for developers to host and review code, manage projects, and build software together.
+                    The ultimate platform for developers to host and review code, manage projects, and build software together.
                 </p>
                 <div className="hero-element mt-8 flex justify-center">
                     <Button size="lg" className="text-lg" asChild>
