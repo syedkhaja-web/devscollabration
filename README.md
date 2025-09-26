@@ -11,7 +11,6 @@ Welcome to **Devs Tec**, the ultimate platform for developers to host and review
 - **AI-Powered Chatbot:** An intelligent assistant to help with code, answer questions, and streamline your workflow.
 - **AI Blog Post Generation:** Automatically generate blog post descriptions from a title.
 - **AI-Generated Reports:** Get an overview of project statistics and a motivational quote to start your day.
-- **Video Demo Reel Generation:** Automatically create a multi-clip demo reel for your projects using generative AI.
 - **Firebase Integration:** Secure user authentication and data storage.
 - **Modern Tech Stack:** Built with Next.js, TypeScript, Tailwind CSS, and ShadCN UI for a beautiful and responsive experience.
 
