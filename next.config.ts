@@ -23,9 +23,9 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '4.5mb',
     },
-    watchOptions: {
-      ignored: ['**/src/ai/**'],
-    },
+  },
+  watchOptions: {
+    ignored: ['**/src/ai/**'],
   },
 };
 
