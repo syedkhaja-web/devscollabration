@@ -23,12 +23,13 @@ export default function ReelPage() {
         title: 'Demo Reel Generated!',
         description: 'Your video clips are ready below.',
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to generate demo reel:', error);
       toast({
         title: 'Generation Failed',
-        description: 'Could not generate the demo reel. Please try again.',
+        description: error.message || 'Could not generate the demo reel. Please try again.',
         variant: 'destructive',
+        duration: 9000,
       });
     } finally {
       setIsLoading(false);

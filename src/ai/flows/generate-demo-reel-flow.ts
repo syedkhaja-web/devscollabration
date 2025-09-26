@@ -63,10 +63,9 @@ const generateDemoReelFlow = ai.defineFlow(
 
     for (const prompt of prompts) {
       let { operation } = await ai.generate({
-        model: googleAI.model('veo-2.0-generate-001'),
+        model: googleAI.model('veo-3.0-generate-preview'),
         prompt: prompt,
         config: {
-          durationSeconds: 8,
           aspectRatio: '16:9',
         },
       });
@@ -82,6 +81,10 @@ const generateDemoReelFlow = ai.defineFlow(
       }
 
       if (operation.error) {
+        // Check for specific billing error message
+        if (operation.error.message.includes("billing enabled")) {
+          throw new Error("This feature requires a Google Cloud project with billing enabled. Please enable billing in your GCP project settings to use this model.");
+        }
         throw new Error(`Failed to generate video: ${operation.error.message}`);
       }
 
