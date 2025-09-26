@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A flow to generate a multi-clip demo reel for Devs Tec.
@@ -79,11 +80,16 @@ const generateDemoReelFlow = ai.defineFlow(
             success = true;
         } catch (e: any) {
           if (e.message && e.message.includes("429") && retries > 1) {
-              console.log("Rate limit hit, retrying in 10 seconds...");
+              console.log(`Rate limit hit, retrying in 10 seconds... (${retries - 1} retries left)`);
               await new Promise(resolve => setTimeout(resolve, 10000));
               retries--;
-          } else {
-            throw e; // Re-throw other errors or if no retries left
+          } else if (e.message && e.message.includes("billing enabled")) {
+              throw new Error("This feature requires a Google Cloud project with billing enabled. Please enable billing in your GCP project settings to use this model.");
+          } else if (e.message && e.message.includes("429")) {
+              throw new Error("Rate limit exceeded. Please wait a few moments before trying again.");
+          }
+          else {
+            throw e; // Re-throw other errors
           }
         }
       }
@@ -100,10 +106,6 @@ const generateDemoReelFlow = ai.defineFlow(
       }
 
       if (operation.error) {
-        // Check for specific billing error message
-        if (operation.error.message.includes("billing enabled")) {
-          throw new Error("This feature requires a Google Cloud project with billing enabled. Please enable billing in your GCP project settings to use this model.");
-        }
         throw new Error(`Failed to generate video: ${operation.error.message}`);
       }
 
