@@ -7,7 +7,7 @@
 #
 # Replace <OWNER>/<REPO> with your actual GitHub repository details.
 github:
-  repository: syedkhaja-web/Devstec-
+  repository: syedkhaja-web/Devs-tec
 
 runConfig:
   # Increase this value if you'd like to automatically spin up
