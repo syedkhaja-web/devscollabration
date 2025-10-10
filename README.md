@@ -28,12 +28,12 @@ To get this project up and running on your local machine, follow these simple st
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/johnybarber357-jpg/Devstec.git
+    git clone https://github.com/syedkhaja-web/Devsk72.git
     ```
 
 2.  **Navigate to the project directory:**
     ```bash
-    cd Devstec
+    cd Devsk72
     ```
 
 3.  **Install dependencies:**
