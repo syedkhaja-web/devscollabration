@@ -15,12 +15,14 @@
         "firebase-debug.log",
         "firebase-debug.*.log",
         "*.local"
-      ]
+      ],
+      "predeploy": []
     }
   ],
   "hosting": {
     "target": "apphosting",
     "source": ".",
+    "predeploy": [],
     "rewrites": [
       {
         "source": "**",
