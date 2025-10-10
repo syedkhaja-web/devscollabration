@@ -19,17 +19,6 @@
       "predeploy": []
     }
   ],
-  "hosting": {
-    "target": "apphosting",
-    "source": ".",
-    "predeploy": [],
-    "rewrites": [
-      {
-        "source": "**",
-        "apphosting": "devs-tec-collab"
-      }
-    ]
-  },
   "apphosting": {
     "source": ".",
     "project": "devs-tec-collab",
