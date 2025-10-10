@@ -4,10 +4,6 @@
 # To connect your GitHub repository for automated deployments,
 # go to your project in the Firebase Console -> App Hosting.
 # Firebase will guide you through the process.
-#
-# Replace <OWNER>/<REPO> with your actual GitHub repository details.
-github:
-  repository: syedkhaja-web/Devs-tec
 
 runConfig:
   # Increase this value if you'd like to automatically spin up
