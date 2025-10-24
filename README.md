@@ -39,33 +39,20 @@ Your application should now be running at [http://localhost:9002](http://localho
 
 ## 🔗 How to Connect to a New GitHub Repository
 
-If you started this project locally and want to push it to a new, empty repository on GitHub, follow these steps:
+To connect this project to your new GitHub repository, run the following commands in your terminal one by one.
 
-1.  **Initialize Git:** If you haven't already, initialize a Git repository in your project folder.
+1.  **Set your remote repository URL:**
+    *(This will update the remote URL to point to your new repository)*
     ```bash
-    git init
+    git remote set-url origin https://github.com/syedkhaja-web/devscollabration.git
     ```
 
-2.  **Add the Remote URL:** Connect your local repository to the one on GitHub.
-    ```bash
-    git remote add origin https://github.com/syedkhaja-web/devscollabration.git
-    ```
-
-3.  **Stage and Commit Your Files:** Add all your project files to the staging area and create your first commit.
-    ```bash
-    git add .
-    git commit -m "Initial commit"
-    ```
-
-4.  **Set the Main Branch:** Ensure your main branch is named `main`.
-    ```bash
-    git branch -M main
-    ```
-
-5.  **Push Your Code:** Push your local code to the GitHub repository.
+2.  **Push your code to GitHub:**
+    *(This will upload all your files)*
     ```bash
     git push -u origin main
     ```
+
 After this, your project will be connected, and you can simply use `git push` for future updates.
 
 ---
