@@ -35,6 +35,7 @@ export function SiteHeader() {
     { href: '/report', label: 'Report' },
     { href: '/documentation', label: 'Documentation' },
     { href: '/blog', label: 'Blog' },
+    { href: '/ai-tools', label: 'AI Tools' },
     { href: '/about', label: 'About' },
     { href: '/deploy', label: 'Deploy' },
   ];
