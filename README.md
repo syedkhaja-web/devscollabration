@@ -46,9 +46,9 @@ If you started this project locally and want to push it to a new, empty reposito
     git init
     ```
 
-2.  **Add the Remote URL:** Connect your local repository to the one on GitHub. **Replace `<YOUR_REPOSITORY_URL>` with the URL you copied from your GitHub page.**
+2.  **Add the Remote URL:** Connect your local repository to the one on GitHub.
     ```bash
-    git remote add origin <YOUR_REPOSITORY_URL>
+    git remote add origin https://github.com/syedkhaja-web/devscollabration.git
     ```
 
 3.  **Stage and Commit Your Files:** Add all your project files to the staging area and create your first commit.
