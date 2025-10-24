@@ -1,48 +1,42 @@
 'use server';
 /**
- * @fileOverview A simple chat flow that uses Gemini to generate responses.
+ * @fileOverview A simple chat flow that uses the gemini-pro model.
  *
- * - chat - A function that takes a message history and a new message, and returns the AI's response.
+ * This file contains the implementation of a Genkit flow for a basic chat functionality.
+ * It takes a history of messages and a new message as input, and returns the model's response.
  */
-import {ai} from '@/ai/genkit';
-import {ChatHistorySchema, ChatMessageSchema} from './chat-schemas';
-import {z} from 'zod';
 
-const ChatInputSchema = z.object({
-  history: ChatHistorySchema,
-  message: z.string(),
-});
+import { ai } from '@/ai/genkit';
+import { ChatHistorySchema, ChatMessageSchema } from './chat-schemas';
 
-const ChatOutputSchema = z.object({
-  response: z.string(),
-});
-
+/**
+ * Executes the chat flow.
+ * @param {object} input - The input for the chat flow.
+ * @param {Array<object>} input.history - The history of messages.
+ * @param {string} input.message - The new message.
+ * @returns {Promise<object>} The result of the chat flow.
+ */
 export async function chat(input: {
-  history: z.infer<typeof ChatHistorySchema>;
+  history: Array<{ role: 'user' | 'model'; content: string }>;
   message: string;
-}): Promise<z.infer<typeof ChatOutputSchema>> {
-  // Construct a system prompt to guide the AI.
-  const systemPrompt = `You are a helpful AI assistant for a software development platform called Devs Tec.
-Your role is to assist users with questions about the platform, help them with coding problems,
-and provide information about software development best practices.
+}): Promise<{ response: string }> {
+  const { history, message } = input;
 
-Keep your responses concise and helpful.`;
-
-  // Prepend the system prompt to the chat history.
-  const historyWithSystemPrompt: z.infer<typeof ChatMessageSchema>[] = [
-    {role: 'system', content: systemPrompt},
-    ...input.history,
-  ];
-
-  const {text} = await ai.generate({
-    prompt: [
-      ...historyWithSystemPrompt.map(msg => ({
-        role: msg.role,
-        content: [{text: msg.content}],
-      })),
-      {role: 'user', content: [{text: input.message}]},
-    ],
+  const response = await ai.generate({
+    prompt: {
+      messages: [
+        ...history.map((msg) => ({
+          role: msg.role,
+          content: [{ text: msg.content }],
+        })),
+        { role: 'user', content: [{ text: message }] },
+      ],
+    },
+    history: history.map((msg) => ({
+      role: msg.role,
+      content: [{ text: msg.content }],
+    })),
   });
 
-  return {response: text};
+  return { response: response.text };
 }

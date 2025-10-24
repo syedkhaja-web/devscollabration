@@ -1,43 +1,38 @@
 'use server';
 /**
- * @fileOverview A Genkit flow for generating a blog post description from a title.
+ * @fileOverview A blog post generation AI flow.
  *
- * - generateBlogPost - A function that takes a title and returns a description.
- * - BlogPostInput - The input type for the generateBlogPost function.
- * - BlogPostOutput - The return type for the generateBlogPost function.
+ * This file contains the implementation of a Genkit flow that generates a blog post
+ * description based on a given title.
  */
+import { ai } from '@/ai/genkit';
+import { BlogPostInputSchema, BlogPostOutputSchema } from './generate-blog-post-schemas';
+import type { BlogPostInput } from './generate-blog-post-schemas';
 
-import {ai} from '@/ai/genkit';
-import {z} from 'zod';
-
-export const BlogPostInputSchema = z.object({
-  title: z.string().describe('The title of the blog post.'),
-});
-export type BlogPostInput = z.infer<typeof BlogPostInputSchema>;
-
-export const BlogPostOutputSchema = z.object({
-  description: z.string().describe('The generated blog post description.'),
-});
-export type BlogPostOutput = z.infer<typeof BlogPostOutputSchema>;
-
-export async function generateBlogPost(
-  input: BlogPostInput
-): Promise<BlogPostOutput> {
+/**
+ * Generates a blog post description based on a title.
+ * @param {object} input - The input for the blog post generation.
+ * @param {string} input.title - The title of the blog post.
+ * @returns {Promise<{ description: string }>} An object containing the generated description.
+ */
+export async function generateBlogPost(input: BlogPostInput): Promise<{ description: string }> {
   const blogPostFlow = ai.defineFlow(
     {
       name: 'blogPostFlow',
       inputSchema: BlogPostInputSchema,
       outputSchema: BlogPostOutputSchema,
     },
-    async ({title}) => {
-      const prompt = `Generate a short, engaging, and SEO-friendly description for a blog post with the following title: "${title}". The description should be about 2-3 sentences long.`;
-
-      const {text} = await ai.generate({
+    async (input) => {
+      const prompt = `Generate a short, engaging blog post description for the title: "${input.title}". The description should be two sentences long.`;
+      
+      const { text } = await ai.generate({
         prompt: prompt,
+        // Optional: Add other generation config like temperature, etc.
       });
-
-      return {description: text};
+      
+      return { description: text };
     }
   );
+
   return await blogPostFlow(input);
 }
