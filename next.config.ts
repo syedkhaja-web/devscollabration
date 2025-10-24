@@ -30,9 +30,6 @@ const nextConfig: NextConfig = {
       bodySizeLimit: '4.5mb',
     },
   },
-  watchOptions: {
-    ignored: ['**/src/ai/**'],
-  },
 };
 
 export default nextConfig;
