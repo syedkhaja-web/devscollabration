@@ -43,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable}`}>
+    <html lang="en" className={`${inter.variable} dark`}>
       <body className="font-body antialiased">
         <FirebaseClientProvider>
           {children}
