@@ -1,42 +1,52 @@
+
 'use server';
 /**
- * @fileOverview A simple chat flow that uses the gemini-pro model.
+ * @fileOverview A conversational AI chat flow.
  *
- * This file contains the implementation of a Genkit flow for a basic chat functionality.
- * It takes a history of messages and a new message as input, and returns the model's response.
+ * - chat - A function that handles a single turn in a conversation.
  */
 
 import { ai } from '@/ai/genkit';
-import { ChatHistorySchema, ChatMessageSchema } from './chat-schemas';
+import {
+  ChatInputSchema,
+  ChatOutputSchema,
+  type ChatInput,
+} from '@/ai/flows/chat-schemas';
 
-/**
- * Executes the chat flow.
- * @param {object} input - The input for the chat flow.
- * @param {Array<object>} input.history - The history of messages.
- * @param {string} input.message - The new message.
- * @returns {Promise<object>} The result of the chat flow.
- */
-export async function chat(input: {
-  history: Array<{ role: 'user' | 'model'; content: string }>;
-  message: string;
-}): Promise<{ response: string }> {
-  const { history, message } = input;
 
-  const response = await ai.generate({
-    prompt: {
-      messages: [
-        ...history.map((msg) => ({
-          role: msg.role,
-          content: [{ text: msg.content }],
-        })),
-        { role: 'user', content: [{ text: message }] },
-      ],
-    },
-    history: history.map((msg) => ({
-      role: msg.role,
-      content: [{ text: msg.content }],
-    })),
-  });
+const chatPrompt = ai.definePrompt({
+  name: 'chatPrompt',
+  input: { schema: ChatInputSchema },
+  output: { schema: ChatOutputSchema },
+  system: `You are a helpful AI assistant named Devs Tec. You are an expert in software development, Next.js, Firebase, and the Genkit AI framework. 
+  Your goal is to assist users with their questions about the Devs Tec platform and provide helpful, accurate information.
+  Keep your responses concise and to the point.`,
+  prompt: `Here is the conversation history:
+{{#each history}}
+{{#if (eq role 'user')}}
+User: {{{content}}}
+{{else}}
+AI: {{{content}}}
+{{/if}}
+{{/each}}
 
-  return { response: response.text };
+New user message: {{{message}}}
+`,
+});
+
+const chatFlow = ai.defineFlow(
+  {
+    name: 'chatFlow',
+    inputSchema: ChatInputSchema,
+    outputSchema: ChatOutputSchema,
+  },
+  async (input) => {
+    const { output } = await chatPrompt(input);
+    return output!;
+  }
+);
+
+export async function chat(input: ChatInput) {
+  const result = await chatFlow(input);
+  return { response: result.response };
 }
