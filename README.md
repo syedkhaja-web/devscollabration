@@ -53,6 +53,15 @@ To connect this project to your new GitHub repository, run the following command
     git push -u origin main
     ```
 
+### What if the Push Fails?
+
+If you see a `[rejected]` error, it's likely because your new GitHub repository was created with a `README` or other file. To fix this, you can force the push, which will replace everything on GitHub with your local project.
+
+Run this command instead for the final step:
+```bash
+git push --force origin main
+```
+
 After this, your project will be connected, and you can simply use `git push` for future updates.
 
 ---
