@@ -34,12 +34,12 @@ export default function Home() {
   ];
 
   const repos = [
-    { name: 'Awesome-AI-Toolbox', description: 'A curated list of AI tools and resources.', language: 'TypeScript', languageColor: '#3178c6', stars: 1250, forks: 230, url: '#' },
-    { name: 'react-kanban-board', description: 'A drag-and-drop Kanban board built with React.', language: 'JavaScript', languageColor: '#f1e05a', stars: 842, forks: 150, url: '#' },
-    { name: 'nextjs-ecommerce-starter', description: 'A feature-rich starter template for e-commerce sites.', language: 'TypeScript', languageColor: '#3178c6', stars: 2100, forks: 450, url: '#' },
-    { name: 'go-microservices-kit', description: 'A toolkit for building microservices in Go.', language: 'Go', languageColor: '#00ADD8', stars: 980, forks: 120, url: '#' },
-    { name: 'rust-game-engine', description: 'A lightweight 2D game engine written in Rust.', language: 'Rust', languageColor: '#dea584', stars: 600, forks: 78, url: '#' },
-    { name: 'devs-tec-docs', description: 'Official documentation for the Devs Tec platform.', language: 'Markdown', languageColor: '#083fa1', stars: 300, forks: 45, url: '#' },
+    { name: 'Awesome-AI-Toolbox', description: 'A curated list of AI tools and resources.', language: 'TypeScript', languageColor: '#3178c6', stars: 1250, forks: 230, url: 'https://github.com' },
+    { name: 'react-kanban-board', description: 'A drag-and-drop Kanban board built with React.', language: 'JavaScript', languageColor: '#f1e05a', stars: 842, forks: 150, url: 'https://github.com' },
+    { name: 'nextjs-ecommerce-starter', description: 'A feature-rich starter template for e-commerce sites.', language: 'TypeScript', languageColor: '#3178c6', stars: 2100, forks: 450, url: 'https://github.com' },
+    { name: 'go-microservices-kit', description: 'A toolkit for building microservices in Go.', language: 'Go', languageColor: '#00ADD8', stars: 980, forks: 120, url: 'https://github.com' },
+    { name: 'rust-game-engine', description: 'A lightweight 2D game engine written in Rust.', language: 'Rust', languageColor: '#dea584', stars: 600, forks: 78, url: 'https://github.com' },
+    { name: 'devs-tec-docs', description: 'Official documentation for the Devs Tec platform.', language: 'Markdown', languageColor: '#083fa1', stars: 300, forks: 45, url: 'https://github.com' },
   ];
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export default function Home() {
         <section className="relative py-20 md:py-32 lg:py-40 text-center overflow-hidden">
             <div className="absolute inset-0 bg-grid-black/[0.05] dark:bg-grid-white/[0.05] [mask-image:linear-gradient(to_bottom,white_10%,transparent_90%)]"></div>
             <div className="container relative">
-                <h1 className="hero-element text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
+                <h1 className="hero-element text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl text-foreground">
                     Where Developers Collaborate
                 </h1>
                 <p className="hero-element mt-4 text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto">
@@ -106,7 +106,9 @@ export default function Home() {
             </h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {repos.map((repo) => (
-                <RepoCard key={repo.name} {...repo} />
+                <Link href={repo.url} key={repo.name} target="_blank" rel="noopener noreferrer" className="block h-full">
+                  <RepoCard {...repo} />
+                </Link>
               ))}
             </div>
           </div>

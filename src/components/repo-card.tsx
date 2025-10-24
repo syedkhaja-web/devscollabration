@@ -9,17 +9,14 @@ type RepoCardProps = {
   languageColor: string;
   stars: number;
   forks: number;
-  url: string;
 };
 
-export function RepoCard({ name, description, language, languageColor, stars, forks, url }: RepoCardProps) {
+export function RepoCard({ name, description, language, languageColor, stars, forks }: Omit<RepoCardProps, 'url'>) {
   return (
     <Card className="flex h-full flex-col rounded-xl transition-all hover:border-primary/50 hover:shadow-lg hover:-translate-y-1">
       <CardHeader>
-        <CardTitle className="text-xl">
-          <Link href={url} className="hover:text-primary transition-colors">
-            {name}
-          </Link>
+        <CardTitle className="text-xl hover:text-primary transition-colors">
+          {name}
         </CardTitle>
         <CardDescription className="pt-2">{description}</CardDescription>
       </CardHeader>
