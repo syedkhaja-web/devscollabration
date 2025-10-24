@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -30,12 +30,14 @@ import { SiteHeader } from '@/components/site-header';
 import { PlusCircle, ExternalLink, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { useAuth, useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
 import { collection, doc } from 'firebase/firestore';
 import { addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
+import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 
 type Project = {
+  id: string;
   name: string;
   description: string;
   url: string;
@@ -46,7 +48,15 @@ export default function ProjectsPage() {
   const [newProject, setNewProject] = useState({ name: '', description: '', url: '' });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const firestore = useFirestore();
+  const auth = useAuth();
+  const { user, isUserLoading } = useUser();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      initiateAnonymousSignIn(auth);
+    }
+  }, [user, isUserLoading, auth]);
 
   const projectsCollection = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -56,9 +66,8 @@ export default function ProjectsPage() {
   const { data: projects, isLoading: areProjectsLoading } = useCollection<Project>(projectsCollection);
 
   const handleAddProject = () => {
-    if (newProject.name && newProject.description && newProject.url && projectsCollection) {
-      // ownerId is no longer relevant, but we can keep the field for schema consistency
-      const projectData: Omit<Project, 'ownerId'> & { ownerId?: string } = { ...newProject, ownerId: 'public' };
+    if (newProject.name && newProject.description && newProject.url && projectsCollection && user) {
+      const projectData = { ...newProject, ownerId: user.uid };
       addDocumentNonBlocking(projectsCollection, projectData);
       setNewProject({ name: '', description: '', url: '' });
       setIsDialogOpen(false);
@@ -66,6 +75,12 @@ export default function ProjectsPage() {
         title: 'Project Added',
         description: `${newProject.name} has been added to the list.`,
       });
+    } else {
+        toast({
+            title: 'Authentication Required',
+            description: 'You must be signed in to add a project.',
+            variant: 'destructive',
+        });
     }
   };
 
@@ -79,7 +94,7 @@ export default function ProjectsPage() {
     });
   };
 
-  const isLoading = areProjectsLoading;
+  const isLoading = areProjectsLoading || isUserLoading;
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -93,7 +108,7 @@ export default function ProjectsPage() {
             </div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button disabled={!user}>
                   <PlusCircle className="mr-2 h-4 w-4" />
                   Add New Project
                 </Button>
@@ -210,3 +225,5 @@ export default function ProjectsPage() {
     </div>
   );
 }
+
+    

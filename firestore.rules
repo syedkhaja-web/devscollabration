@@ -1,115 +1,133 @@
 /**
- * @file Firestore Security Rules
- * @version 2
+ * @fileoverview Firestore Security Rules for Devs Tec Collab platform.
  *
- * @description
- * This ruleset enforces a strict user-ownership model for user data and project ownership,
- * and public read access with owner-only writes for blog posts. It is designed for the
- * Devs Tec Collab platform, focusing on projects, documentation, and blog posts.
+ * Core Philosophy:
+ * This ruleset employs a hybrid security model:
+ *   - User data is strictly private and accessible only to the owning user.
+ *   - Projects and BlogPosts are publicly readable but writable only by their owners.
+ *   - Documentation follows the ownership of its parent project.
  *
  * Data Structure:
- * - /users/{userId}: Stores user profiles. Only the user can access their own data.
- * - /projects/{projectId}: Stores project information. Only the project owner can modify.
- * - /projects/{projectId}/documentation/{documentationId}: Stores documentation for projects. Only the project owner can modify.
- * - /blog_posts/{blogPostId}: Stores blog posts. Publicly readable, but only the author can modify.
+ * - /users/{userId}:  Stores private user data.  `userId` in path must match `auth.uid`.
+ * - /projects/{projectId}: Stores project data, including an `ownerId` field.
+ * - /projects/{projectId}/documentation/{documentationId}: Stores project documentation, inherits `projectId`.
+ * - /blog_posts/{blogPostId}: Stores blog posts, including an `authorId` field.
  *
  * Key Security Decisions:
- * - Users can only access their own user documents.
- * - Project creation, modification, and deletion are restricted to the project owner.
- * - Documentation creation, modification, and deletion are restricted to the project owner.
- * - Blog posts are publicly readable, but creation, modification, and deletion are restricted to the author.
- * - Listing of user documents is denied.
+ * - Users can only access their own data in the `/users/{userId}` collection.
+ * - Listing users is disallowed to prevent data leakage.
+ * - Blog posts are publicly readable, but only the author can create, update, or delete them.
+ * - Projects are publicly readable, but only the owner can create, update, or delete them.
+ * - Documentation inherits the security context of its parent project.
  *
  * Denormalization for Authorization:
- * - Projects and blog posts include 'ownerId' and 'authorId' fields, respectively, to simplify authorization checks.
- * - Documentation includes 'projectId' to allow authorization checks based on project ownership.
+ *  - Projects and BlogPosts include `ownerId` and `authorId` fields, respectively, to avoid needing extra reads for authorization.
+ *  - Documentation includes `projectId` to link back to the owning project for authorization.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Enforces that only the authenticated user can access their own user document.
-     * @path /users/{userId}
-     * @allow (get, create, update, delete, list): if request.auth.uid == userId
-     * @deny (get, create, update, delete, list): if request.auth.uid != userId
-     * @principle Enforces document ownership for all operations.
+     * @description Defines if the current user is signed in.
+     * @returns {boolean} True if the user is signed in, false otherwise.
      */
-    match /users/{userId} {
-      // Only signed-in users can read or write their own user document.
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isExistingOwner(userId);
-      allow delete: if isSignedIn() && isExistingOwner(userId);
-    }
-
-    /**
-     * @description Enforces that only the project owner can create, update, or delete projects.
-     * @path /projects/{projectId}
-     * @allow (create): if request.auth.uid == request.resource.data.ownerId
-     * @allow (get, list): if true;
-     * @allow (update, delete): if request.auth.uid == resource.data.ownerId
-     * @deny (create): if request.auth.uid != request.resource.data.ownerId
-     * @deny (update, delete): if request.auth.uid != resource.data.ownerId
-     * @principle Enforces document ownership for writes and public read for all operations.
-     */
-    match /projects/{projectId} {
-      allow get, list: if true;
-      allow create: if isSignedIn() && request.auth.uid == request.resource.data.ownerId;
-      allow update: if isSignedIn() && isExistingOwner(resource.data.ownerId);
-      allow delete: if isSignedIn() && isExistingOwner(resource.data.ownerId);
-    }
-
-    /**
-     * @description Enforces that only the project owner can create, update, or delete documentation.
-     * @path /projects/{projectId}/documentation/{documentationId}
-     * @allow (create): if get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid
-     * @allow (get, list): if true;
-     * @allow (update, delete): if get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid
-     * @deny (create): if get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId != request.auth.uid
-     * @deny (update, delete): if get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId != request.auth.uid
-     * @principle Enforces document ownership for writes and public read for all operations.
-     */
-    match /projects/{projectId}/documentation/{documentationId} {
-      allow get, list: if true;
-      allow create: if isSignedIn() && get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid;
-      allow update: if isSignedIn() && isExistingProjectOwner(projectId);
-      allow delete: if isSignedIn() && isExistingProjectOwner(projectId);
-    }
-
-    /**
-     * @description Allows public read access to blog posts, but restricts creation, updates, and deletion to the author.
-     * @path /blog_posts/{blogPostId}
-     * @allow (get, list): if true
-     * @allow (create): if request.auth.uid == request.resource.data.authorId
-     * @allow (update, delete): if request.auth.uid == resource.data.authorId
-     * @deny (create): if request.auth.uid != request.resource.data.authorId
-     * @deny (update, delete): if request.auth.uid != resource.data.authorId
-     * @principle Allows public read access, but enforces document ownership for writes.
-     */
-    match /blog_posts/{blogPostId} {
-      allow get, list: if true;
-      allow create: if isSignedIn() && request.auth.uid == request.resource.data.authorId;
-      allow update: if isSignedIn() && isExistingOwner(resource.data.authorId);
-      allow delete: if isSignedIn() && isExistingOwner(resource.data.authorId);
-    }
-
-    // Helper functions
     function isSignedIn() {
       return request.auth != null;
     }
 
+    /**
+     * @description Defines if the current user is the owner of the resource based on the uid.
+     * @param {string} userId - The user ID to check against the request's auth UID.
+     * @returns {boolean} True if the user is the owner, false otherwise.
+     */
     function isOwner(userId) {
-      return request.auth.uid == userId;
+      return isSignedIn() && request.auth.uid == userId;
     }
 
-    function isExistingOwner(ownerId) {
-        return isSignedIn() && request.auth.uid == ownerId && resource != null;
+    /**
+     * @description Checks if the current user is the owner of the resource and the resource exists.
+     * @param {string} userId - The user ID to check against the resource's owner ID.
+     * @returns {boolean} True if the user is the owner and the resource exists, false otherwise.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
     }
 
-    function isExistingProjectOwner(projectId) {
-      return isSignedIn() && get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid && resource != null;
+    /**
+     * @description Rules for user profiles.
+     * @path /users/{userId}
+     * @allow (create) Signed-in user creates their own profile with matching userId.
+     * @allow (get, update, delete) Signed-in user accesses their own profile with matching userId.
+     * @deny (create) Signed-in user tries to create a profile with a mismatched userId.
+     * @deny (get, update, delete) Signed-in user tries to access another user's profile.
+     * @principle Enforces document ownership for writes. Restricts access to a user's own data tree. Validates relational integrity between documents.
+     */
+    match /users/{userId} {
+      // Only the user can read/write their own data.
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id; // Enforce immutability of id
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Rules for projects.
+     * @path /projects/{projectId}
+     * @allow (get, list) Anyone can read project data.
+     * @allow (create) Signed-in user creates a project with their userId as the ownerId.
+     * @allow (update, delete) Only the owner can update or delete a project.
+     * @deny (create) Signed-in user creates a project with a mismatched ownerId.
+     * @deny (update, delete) Non-owner tries to update or delete a project.
+     * @principle Enforces document ownership for writes. Publicly readable, owner-only writable. Validates relational integrity between documents.
+     */
+    match /projects/{projectId} {
+      // Anyone can read projects
+      allow get, list: if true;
+
+      // Only the owner can create, update, or delete projects.
+      allow create: if isSignedIn() && request.resource.data.ownerId == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.ownerId);
+      allow delete: if isExistingOwner(resource.data.ownerId);
+    }
+
+    /**
+     * @description Rules for documentation within projects.
+     * @path /projects/{projectId}/documentation/{documentationId}
+     * @allow (get, list) Anyone can read documentation.
+     * @allow (create) Project owner creates documentation within their project.
+     * @allow (update, delete) Only the project owner can update or delete documentation.
+     * @deny (create) Non-owner tries to create documentation in a project.
+     * @deny (update, delete) Non-owner tries to update or delete documentation.
+     * @principle Inherits ownership from the parent project. Validates relational integrity between documents.
+     */
+    match /projects/{projectId}/documentation/{documentationId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid && request.resource.data.projectId == projectId;
+      allow update: if isSignedIn() && get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid;
+      allow delete: if isSignedIn() && get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid;
+    }
+
+    /**
+     * @description Rules for blog posts.
+     * @path /blog_posts/{blogPostId}
+     * @allow (get, list) Anyone can read blog posts.
+     * @allow (create) Signed-in user creates a blog post with their userId as the authorId.
+     * @allow (update, delete) Only the author can update or delete a blog post.
+     * @deny (create) Non-signed in user tries to create a blog post.
+     * @deny (create) Signed-in user creates a blog post with a mismatched authorId.
+     * @deny (update, delete) Non-author tries to update or delete a blog post.
+     * @principle Enforces document ownership for writes. Publicly readable, owner-only writable. Validates relational integrity between documents.
+     */
+    match /blog_posts/{blogPostId} {
+      // Anyone can read blog posts
+      allow get, list: if true;
+
+      // Only the author can create, update, or delete blog posts
+      allow create: if isSignedIn() && request.resource.data.authorId == request.auth.uid;
+      allow update: if isExistingOwner(resource.data.authorId);
+      allow delete: if isExistingOwner(resource.data.authorId);
     }
   }
 }

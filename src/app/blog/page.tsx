@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { SiteHeader } from '@/components/site-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -20,14 +20,16 @@ import { Textarea } from '@/components/ui/textarea';
 import { PlusCircle, User, Calendar, Loader2, Sparkles, Trash2 } from 'lucide-react';
 import { generateBlogPost } from '@/ai/flows/generate-blog-post-flow';
 import { useToast } from "@/hooks/use-toast";
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { useAuth, useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
 import { collection, doc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
 
 
 type Post = {
+  id: string;
   title: string;
   description: string;
   author: string;
@@ -42,6 +44,14 @@ export default function BlogPage() {
   const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
   const { toast } = useToast();
   const firestore = useFirestore();
+  const auth = useAuth();
+  const { user, isUserLoading } = useUser();
+
+  useEffect(() => {
+    if (!isUserLoading && !user) {
+      initiateAnonymousSignIn(auth);
+    }
+  }, [user, isUserLoading, auth]);
 
   const postsCollection = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -70,23 +80,19 @@ export default function BlogPage() {
         setNewPost(prev => ({...prev, description}));
     } catch (error) {
         console.error("Failed to generate description:", error);
-        toast({
-          title: "Description Generation Failed",
-          description: "Could not generate a description for the post. Please try again.",
-          variant: "destructive",
-        });
+        setNewPost(prev => ({...prev, description: "AI description generation is currently unavailable. Please write a description manually."}));
     } finally {
         setIsGeneratingDescription(false);
     }
   };
 
   const handleAddPost = async () => {
-    if (newPost.title && newPost.description && postsCollection) {
+    if (newPost.title && newPost.description && postsCollection && user) {
       setIsPublishing(true);
       const postData = {
         ...newPost,
-        author: 'Anonymous',
-        authorId: 'public',
+        author: user.isAnonymous ? 'Anonymous' : (user.displayName || 'Anonymous'),
+        authorId: user.uid,
         createdAt: serverTimestamp(),
       };
       
@@ -99,6 +105,12 @@ export default function BlogPage() {
         title: 'Blog Post Published',
         description: 'Your new post is now live.',
       });
+    } else {
+        toast({
+            title: 'Authentication Required',
+            description: 'You must be signed in to publish a post.',
+            variant: 'destructive'
+        })
     }
   };
 
@@ -112,7 +124,7 @@ export default function BlogPage() {
     });
   };
 
-  const isLoading = arePostsLoading;
+  const isLoading = arePostsLoading || isUserLoading;
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -128,7 +140,7 @@ export default function BlogPage() {
             </div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button disabled={!user}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Add New Post
               </Button>
@@ -242,3 +254,5 @@ export default function BlogPage() {
     </div>
   );
 }
+
+    
