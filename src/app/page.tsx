@@ -87,7 +87,7 @@ export default function Home() {
                 </p>
                 <div className="hero-element mt-8 flex justify-center">
                     <Button size="lg" className="text-lg" asChild>
-                      <Link href="/login">Get Started</Link>
+                      <Link href="/projects">Get Started</Link>
                     </Button>
                 </div>
             </div>

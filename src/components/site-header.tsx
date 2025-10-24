@@ -68,17 +68,8 @@ export function SiteHeader() {
         </Button>
       )
     }
-    // Don't show sign-in button on the login page itself
-    if (pathname === '/login') return null;
-    
-    return (
-      <Button asChild variant="ghost" size="sm">
-        <Link href="/login">
-          <LogIn className="mr-2" />
-          Sign In
-        </Link>
-      </Button>
-    )
+    // Don't show sign-in button
+    return null;
   }
 
 
