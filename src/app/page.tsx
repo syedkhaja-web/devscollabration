@@ -69,20 +69,12 @@ export default function Home() {
       <SiteHeader />
       <main className="flex-1">
         <section className="relative py-20 md:py-32 lg:py-40 text-center overflow-hidden">
-             <Image
-              src="https://storage.googleapis.com/project-spark-34129/public/app-background.png"
-              alt="App background"
-              fill
-              className="object-cover object-center"
-              priority
-              data-ai-hint="abstract background"
-            />
-            <div className="absolute inset-0 bg-black/40"></div>
+            <div className="absolute inset-0 bg-grid-black/[0.05] dark:bg-grid-white/[0.05] [mask-image:linear-gradient(to_bottom,white_10%,transparent_90%)]"></div>
             <div className="container relative">
-                <h1 className="hero-element text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-300">
+                <h1 className="hero-element text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl">
                     Where Developers Collaborate
                 </h1>
-                <p className="hero-element mt-4 text-lg md:text-xl lg:text-2xl text-neutral-300 max-w-3xl mx-auto">
+                <p className="hero-element mt-4 text-lg md:text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto">
                     The ultimate platform for developers to host and review code, manage projects, and build software together.
                 </p>
                 <div className="hero-element mt-8 flex justify-center">
