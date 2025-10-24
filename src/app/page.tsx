@@ -9,10 +9,31 @@ import { SiteHeader } from '@/components/site-header';
 import { RepoCard } from '@/components/repo-card';
 import { DevsTecIcon } from '@/components/icons';
 import { Input } from '@/components/ui/input';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import anime from 'animejs';
 
+const allRepos = [
+    { name: 'microsoft/AI-Toolbox', description: 'A curated list of AI tools and resources.', language: 'TypeScript', languageColor: '#3178c6', stars: 1250, forks: 230, url: 'https://github.com/microsoft/AI-Toolbox' },
+    { name: 'producthunt/react-kanban-board', description: 'A drag-and-drop Kanban board built with React.', language: 'JavaScript', languageColor: '#f1e05a', stars: 842, forks: 150, url: 'https://github.com/producthunt/react-kanban-board' },
+    { name: 'vercel/nextjs-commerce', description: 'A feature-rich starter template for e-commerce sites.', language: 'TypeScript', languageColor: '#3178c6', stars: 2100, forks: 450, url: 'https://github.com/vercel/nextjs-commerce' },
+    { name: 'go-kit/kit', description: 'A toolkit for building microservices in Go.', language: 'Go', languageColor: '#00ADD8', stars: 980, forks: 120, url: 'https://github.com/go-kit/kit' },
+    { name: 'bevyengine/bevy', description: 'A lightweight 2D game engine written in Rust.', language: 'Rust', languageColor: '#dea584', stars: 600, forks: 78, url: 'https://github.com/bevyengine/bevy' },
+    { name: 'facebook/docusaurus', description: 'Easy to maintain open source documentation websites.', language: 'TypeScript', languageColor: '#3178c6', stars: 45000, forks: 6700, url: 'https://github.com/facebook/docusaurus' },
+    { name: 'tensorflow/tensorflow', description: 'An end-to-end open source platform for machine learning.', language: 'C++', languageColor: '#f34b7d', stars: 178000, forks: 88000, url: 'https://github.com/tensorflow/tensorflow' },
+    { name: 'airbnb/javascript', description: 'Airbnb\'s JavaScript Style Guide.', language: 'JavaScript', languageColor: '#f1e05a', stars: 138000, forks: 26000, url: 'https://github.com/airbnb/javascript' },
+    { name: 'flutter/flutter', description: 'Flutter makes it easy and fast to build beautiful apps for mobile and beyond.', language: 'Dart', languageColor: '#00B4AB', stars: 159000, forks: 26000, url: 'https://github.com/flutter/flutter' },
+    { name: 'openai/gpt-3', description: 'Examples and guides for the OpenAI API.', language: 'Python', languageColor: '#3572A5', stars: 15000, forks: 3000, url: 'https://github.com/openai/gpt-3' },
+    { name: 'denoland/deno', description: 'A modern runtime for JavaScript and TypeScript.', language: 'Rust', languageColor: '#dea584', stars: 91000, forks: 5000, url: 'https://github.com/denoland/deno' },
+    { name: 'storybookjs/storybook', description: 'Build component driven UIs faster.', language: 'TypeScript', languageColor: '#3178c6', stars: 80000, forks: 8600, url: 'https://github.com/storybookjs/storybook' },
+  ];
+  
+  // Function to shuffle an array and return a slice
+  const shuffleAndPick = (arr: any[], count: number) => {
+    return [...arr].sort(() => 0.5 - Math.random()).slice(0, count);
+  };
+
 export default function Home() {
+    const [repos, setRepos] = useState<typeof allRepos>([]);
 
   const features = [
     {
@@ -32,16 +53,9 @@ export default function Home() {
     },
   ];
 
-  const repos = [
-    { name: 'microsoft/AI-Toolbox', description: 'A curated list of AI tools and resources.', language: 'TypeScript', languageColor: '#3178c6', stars: 1250, forks: 230, url: 'https://github.com/microsoft/AI-Toolbox' },
-    { name: 'producthunt/react-kanban-board', description: 'A drag-and-drop Kanban board built with React.', language: 'JavaScript', languageColor: '#f1e05a', stars: 842, forks: 150, url: 'https://github.com/producthunt/react-kanban-board' },
-    { name: 'vercel/nextjs-commerce', description: 'A feature-rich starter template for e-commerce sites.', language: 'TypeScript', languageColor: '#3178c6', stars: 2100, forks: 450, url: 'https://github.com/vercel/nextjs-commerce' },
-    { name: 'go-kit/kit', description: 'A toolkit for building microservices in Go.', language: 'Go', languageColor: '#00ADD8', stars: 980, forks: 120, url: 'https://github.com/go-kit/kit' },
-    { name: 'bevyengine/bevy', description: 'A lightweight 2D game engine written in Rust.', language: 'Rust', languageColor: '#dea584', stars: 600, forks: 78, url: 'https://github.com/bevyengine/bevy' },
-    { name: 'facebook/docusaurus', description: 'Official documentation for the Devs Tec platform.', language: 'Markdown', languageColor: '#083fa1', stars: 300, forks: 45, url: 'https://github.com/facebook/docusaurus' },
-  ];
-
   useEffect(() => {
+    setRepos(shuffleAndPick(allRepos, 6));
+
     const animation = anime.timeline({
         easing: 'easeOutExpo',
         duration: 800
