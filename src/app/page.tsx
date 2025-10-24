@@ -34,12 +34,12 @@ export default function Home() {
   ];
 
   const repos = [
-    { name: 'Awesome-AI-Toolbox', description: 'A curated list of AI tools and resources.', language: 'TypeScript', languageColor: '#3178c6', stars: 1250, forks: 230, url: 'https://github.com' },
-    { name: 'react-kanban-board', description: 'A drag-and-drop Kanban board built with React.', language: 'JavaScript', languageColor: '#f1e05a', stars: 842, forks: 150, url: 'https://github.com' },
-    { name: 'nextjs-ecommerce-starter', description: 'A feature-rich starter template for e-commerce sites.', language: 'TypeScript', languageColor: '#3178c6', stars: 2100, forks: 450, url: 'https://github.com' },
-    { name: 'go-microservices-kit', description: 'A toolkit for building microservices in Go.', language: 'Go', languageColor: '#00ADD8', stars: 980, forks: 120, url: 'https://github.com' },
-    { name: 'rust-game-engine', description: 'A lightweight 2D game engine written in Rust.', language: 'Rust', languageColor: '#dea584', stars: 600, forks: 78, url: 'https://github.com' },
-    { name: 'devs-tec-docs', description: 'Official documentation for the Devs Tec platform.', language: 'Markdown', languageColor: '#083fa1', stars: 300, forks: 45, url: 'https://github.com' },
+    { name: 'microsoft/AI-Toolbox', description: 'A curated list of AI tools and resources.', language: 'TypeScript', languageColor: '#3178c6', stars: 1250, forks: 230, url: 'https://github.com/microsoft/AI-Toolbox' },
+    { name: 'producthunt/react-kanban-board', description: 'A drag-and-drop Kanban board built with React.', language: 'JavaScript', languageColor: '#f1e05a', stars: 842, forks: 150, url: 'https://github.com/producthunt/react-kanban-board' },
+    { name: 'vercel/nextjs-commerce', description: 'A feature-rich starter template for e-commerce sites.', language: 'TypeScript', languageColor: '#3178c6', stars: 2100, forks: 450, url: 'https://github.com/vercel/nextjs-commerce' },
+    { name: 'go-kit/kit', description: 'A toolkit for building microservices in Go.', language: 'Go', languageColor: '#00ADD8', stars: 980, forks: 120, url: 'https://github.com/go-kit/kit' },
+    { name: 'bevyengine/bevy', description: 'A lightweight 2D game engine written in Rust.', language: 'Rust', languageColor: '#dea584', stars: 600, forks: 78, url: 'https://github.com/bevyengine/bevy' },
+    { name: 'facebook/docusaurus', description: 'Official documentation for the Devs Tec platform.', language: 'Markdown', languageColor: '#083fa1', stars: 300, forks: 45, url: 'https://github.com/facebook/docusaurus' },
   ];
 
   useEffect(() => {
