@@ -20,8 +20,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { PlusCircle, User, Calendar, Loader2, Sparkles, Trash2 } from 'lucide-react';
 import { generateBlogPost } from '@/ai/flows/generate-blog-post-flow';
 import { useToast } from "@/hooks/use-toast";
-import { useUser, useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, doc, addDoc, deleteDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, doc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -41,7 +41,6 @@ export default function BlogPage() {
   const [isPublishing, setIsPublishing] = useState(false);
   const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
   const { toast } = useToast();
-  const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
 
   const postsCollection = useMemoFirebase(() => {
@@ -82,12 +81,12 @@ export default function BlogPage() {
   };
 
   const handleAddPost = async () => {
-    if (newPost.title && newPost.description && user && postsCollection) {
+    if (newPost.title && newPost.description && postsCollection) {
       setIsPublishing(true);
       const postData = {
         ...newPost,
-        author: user.displayName || user.email || 'Anonymous',
-        authorId: user.uid,
+        author: 'Anonymous',
+        authorId: 'public',
         createdAt: serverTimestamp(),
       };
       
@@ -113,7 +112,7 @@ export default function BlogPage() {
     });
   };
 
-  const isLoading = isUserLoading || arePostsLoading;
+  const isLoading = arePostsLoading;
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -127,74 +126,72 @@ export default function BlogPage() {
                 Latest news, articles, and updates from the Devs Tec team.
               </p>
             </div>
-            {user && (
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  Add New Post
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>Create New Post</DialogTitle>
-                  <DialogDescription>
-                    Fill in the details below to publish a new blog post.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="title" className="text-right">
-                      Title
-                    </Label>
-                    <Input
-                      id="title"
-                      value={newPost.title}
-                      onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-                      className="col-span-3"
-                      placeholder="Your Post Title"
-                      disabled={isPublishing}
-                    />
-                  </div>
-                  <div className="grid grid-cols-4 items-start gap-4">
-                    <Label htmlFor="description" className="text-right pt-2">
-                      Description
-                    </Label>
-                    <div className="col-span-3 space-y-2">
-                        <Textarea
-                          id="description"
-                          value={newPost.description}
-                          onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
-                          placeholder="A short summary of your post."
-                          disabled={isPublishing || isGeneratingDescription}
-                          rows={5}
-                        />
-                        <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="w-full" 
-                            onClick={handleGenerateDescription}
-                            disabled={isPublishing || isGeneratingDescription || !newPost.title}
-                        >
-                            {isGeneratingDescription ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : (
-                                <Sparkles className="mr-2 h-4 w-4" />
-                            )}
-                            Generate with AI
-                        </Button>
-                    </div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add New Post
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Create New Post</DialogTitle>
+                <DialogDescription>
+                  Fill in the details below to publish a new blog post.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="title" className="text-right">
+                    Title
+                  </Label>
+                  <Input
+                    id="title"
+                    value={newPost.title}
+                    onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
+                    className="col-span-3"
+                    placeholder="Your Post Title"
+                    disabled={isPublishing}
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label htmlFor="description" className="text-right pt-2">
+                    Description
+                  </Label>
+                  <div className="col-span-3 space-y-2">
+                      <Textarea
+                        id="description"
+                        value={newPost.description}
+                        onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
+                        placeholder="A short summary of your post."
+                        disabled={isPublishing || isGeneratingDescription}
+                        rows={5}
+                      />
+                      <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full" 
+                          onClick={handleGenerateDescription}
+                          disabled={isPublishing || isGeneratingDescription || !newPost.title}
+                      >
+                          {isGeneratingDescription ? (
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                              <Sparkles className="mr-2 h-4 w-4" />
+                          )}
+                          Generate with AI
+                      </Button>
                   </div>
                 </div>
-                <DialogFooter>
-                  <Button onClick={handleAddPost} disabled={isPublishing || isGeneratingDescription || !newPost.title || !newPost.description}>
-                    {isPublishing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                    {isPublishing ? 'Publishing...' : 'Publish Post'}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-            )}
+              </div>
+              <DialogFooter>
+                <Button onClick={handleAddPost} disabled={isPublishing || isGeneratingDescription || !newPost.title || !newPost.description}>
+                  {isPublishing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isPublishing ? 'Publishing...' : 'Publish Post'}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           </div>
 
           <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
@@ -207,16 +204,14 @@ export default function BlogPage() {
                 <Card key={post.id} className="flex flex-col overflow-hidden rounded-xl border transition-all hover:-translate-y-1 hover:shadow-xl hover:border-primary">
                   <CardHeader>
                     <CardTitle className="text-xl h-16">{post.title}</CardTitle>
-                    {user?.uid === post.authorId && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="absolute top-2 right-2 h-8 w-8 text-muted-foreground hover:text-destructive"
-                          onClick={() => handleDeletePost(post.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                    )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute top-2 right-2 h-8 w-8 text-muted-foreground hover:text-destructive"
+                      onClick={() => handleDeletePost(post.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </CardHeader>
                   <CardContent className="flex-grow">
                     <CardDescription>{post.description}</CardDescription>
@@ -238,7 +233,7 @@ export default function BlogPage() {
             ) : (
               <div className="col-span-full text-center py-20 bg-card rounded-lg border-2 border-dashed">
                 <h2 className="text-xl font-semibold">No Blog Posts Yet</h2>
-                <p className="text-muted-foreground mt-2">{user ? 'Click "Add New Post" to get started.' : 'Be the first to write a post!'}</p>
+                <p className="text-muted-foreground mt-2">Click "Add New Post" to get started.</p>
               </div>
             )}
           </div>

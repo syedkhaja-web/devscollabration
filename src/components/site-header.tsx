@@ -5,22 +5,15 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { DevsTecIcon } from '@/components/icons';
-import { Menu, X, LogOut, LogIn } from 'lucide-react';
-import { useUser, useAuth } from '@/firebase';
-import { signOut } from 'firebase/auth';
-import { usePathname, useRouter } from 'next/navigation';
+import { Menu, X } from 'lucide-react';
+import { usePathname } from 'next/navigation';
 
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, isUserLoading } = useUser();
-  const auth = useAuth();
-  const [clientLoaded, setClientLoaded] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
 
   useEffect(() => {
-    setClientLoaded(true);
     const handleResize = () => {
       if (window.innerWidth >= 768) {
         setIsMenuOpen(false);
@@ -33,13 +26,8 @@ export function SiteHeader() {
     }
   }, []);
 
-  const handleSignOut = async () => {
-    if (!auth) return;
-    await signOut(auth);
-    router.push('/login');
-  };
 
-  const baseNavLinks = [
+  const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/projects', label: 'Projects' },
     { href: '/collaborate', label: 'Collaborate' },
@@ -50,29 +38,6 @@ export function SiteHeader() {
     { href: '/about', label: 'About' },
     { href: '/deploy', label: 'Deploy' },
   ];
-
-  const navLinks = isUserLoading ? [] : baseNavLinks;
-  
-  const AuthButton = () => {
-    if (isUserLoading || !clientLoaded) return null;
-
-    if (user) {
-      return (
-        <Button variant="ghost" size="sm" onClick={handleSignOut}>
-          <LogOut className="mr-2" />
-          Sign Out
-        </Button>
-      )
-    }
-    return (
-        <Button variant="ghost" size="sm" asChild>
-            <Link href="/login">
-                <LogIn className="mr-2" />
-                Sign In
-            </Link>
-        </Button>
-    );
-  }
 
 
   return (
@@ -97,9 +62,6 @@ export function SiteHeader() {
         </div>
 
         <div className="flex flex-1 items-center justify-end space-x-2">
-          <div className="hidden md:flex">
-             <AuthButton />
-          </div>
           <div className="md:hidden">
             <Button
               variant="ghost"
@@ -125,9 +87,6 @@ export function SiteHeader() {
                 {link.label}
               </Link>
             ))}
-            <div className="border-t pt-2 mt-2">
-               <AuthButton />
-            </div>
           </nav>
         </div>
       )}
