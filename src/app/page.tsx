@@ -77,7 +77,7 @@ export default function Home() {
               priority
               data-ai-hint="abstract background"
             />
-            <div className="absolute inset-0 bg-black/60"></div>
+            <div className="absolute inset-0 bg-black/40"></div>
             <div className="container relative">
                 <h1 className="hero-element text-4xl font-bold tracking-tight md:text-6xl lg:text-7xl bg-clip-text text-transparent bg-gradient-to-b from-white to-neutral-300">
                     Where Developers Collaborate
