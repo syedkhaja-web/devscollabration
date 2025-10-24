@@ -12,8 +12,10 @@ import { Input } from '@/components/ui/input';
 import { useEffect } from 'react';
 import anime from 'animejs';
 import Image from 'next/image';
+import { useUser } from '@/firebase';
 
 export default function Home() {
+  const { user } = useUser();
 
   const features = [
     {
@@ -87,7 +89,7 @@ export default function Home() {
                 </p>
                 <div className="hero-element mt-8 flex justify-center">
                     <Button size="lg" className="text-lg" asChild>
-                      <Link href="/projects">Get Started</Link>
+                      <Link href={user ? "/projects" : "/login"}>Get Started</Link>
                     </Button>
                 </div>
             </div>

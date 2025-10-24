@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { SiteHeader } from '@/components/site-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,47 +17,44 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { PlusCircle, User, Calendar, Loader2, Sparkles } from 'lucide-react';
+import { PlusCircle, User, Calendar, Loader2, Sparkles, Trash2 } from 'lucide-react';
 import { generateBlogPost } from '@/ai/flows/generate-blog-post-flow';
 import { useToast } from "@/hooks/use-toast";
+import { useUser, useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, doc, addDoc, deleteDoc, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import { addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { format } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 type Post = {
   title: string;
   description: string;
   author: string;
-  date: string;
+  authorId: string;
+  createdAt: any;
 };
 
-const initialPosts: Post[] = [
-    {
-        title: 'Building Modern Web Apps with Next.js',
-        description: 'A deep dive into the features that make Next.js a powerhouse for modern web development, including Server Components and the App Router.',
-        author: 'Jane Doe',
-        date: '2024-07-21',
-    },
-    {
-        title: 'Mastering Tailwind CSS for Rapid UI Development',
-        description: 'Learn how to leverage Tailwind CSS to build beautiful, responsive user interfaces faster than ever before. Includes tips and tricks.',
-        author: 'John Smith',
-        date: '2024-07-20',
-    },
-    {
-        title: 'The Rise of AI in Collaborative Coding',
-        description: 'Exploring how AI-powered tools are changing the way developer teams collaborate, write code, and solve problems.',
-        author: 'Alex Johnson',
-        date: '2024-07-19',
-    },
-];
-
-
 export default function BlogPage() {
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
-  const [newPost, setNewPost] = useState<Omit<Post, 'date'>>({ title: '', description: '', author: '' });
+  const [newPost, setNewPost] = useState({ title: '', description: '' });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
   const { toast } = useToast();
+  const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
+
+  const postsCollection = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'blog_posts');
+  }, [firestore]);
+  
+  const postsQuery = useMemoFirebase(() => {
+    if (!postsCollection) return null;
+    return query(postsCollection, orderBy('createdAt', 'desc'));
+  }, [postsCollection]);
+
+  const { data: posts, isLoading: arePostsLoading } = useCollection<Post>(postsQuery);
 
   const handleGenerateDescription = async () => {
     if (!newPost.title) {
@@ -85,22 +82,38 @@ export default function BlogPage() {
   };
 
   const handleAddPost = async () => {
-    if (newPost.title && newPost.description && newPost.author) {
+    if (newPost.title && newPost.description && user && postsCollection) {
       setIsPublishing(true);
-      const today = new Date().toISOString().split('T')[0];
+      const postData = {
+        ...newPost,
+        author: user.displayName || user.email || 'Anonymous',
+        authorId: user.uid,
+        createdAt: serverTimestamp(),
+      };
       
-      setPosts([
-          { 
-            ...newPost, 
-            date: today, 
-          }, 
-          ...posts
-        ]);
-      setNewPost({ title: '', description: '', author: '' });
+      addDocumentNonBlocking(postsCollection, postData);
+
+      setNewPost({ title: '', description: '' });
       setIsDialogOpen(false);
       setIsPublishing(false);
+      toast({
+        title: 'Blog Post Published',
+        description: 'Your new post is now live.',
+      });
     }
   };
+
+  const handleDeletePost = (postId: string) => {
+    if (!firestore) return;
+    const postRef = doc(firestore, 'blog_posts', postId);
+    deleteDocumentNonBlocking(postRef);
+    toast({
+      title: 'Post Deleted',
+      description: 'The blog post has been removed.',
+    });
+  };
+
+  const isLoading = isUserLoading || arePostsLoading;
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -114,7 +127,8 @@ export default function BlogPage() {
                 Latest news, articles, and updates from the Devs Tec team.
               </p>
             </div>
-             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            {user && (
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
                   <PlusCircle className="mr-2 h-4 w-4" />
@@ -171,51 +185,62 @@ export default function BlogPage() {
                         </Button>
                     </div>
                   </div>
-                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="author" className="text-right">
-                      Author
-                    </Label>
-                    <Input
-                      id="author"
-                      value={newPost.author}
-                      onChange={(e) => setNewPost({ ...newPost, author: e.target.value })}
-                      className="col-span-3"
-                      placeholder="Author's Name"
-                      disabled={isPublishing}
-                    />
-                  </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={handleAddPost} disabled={isPublishing || isGeneratingDescription}>
+                  <Button onClick={handleAddPost} disabled={isPublishing || isGeneratingDescription || !newPost.title || !newPost.description}>
                     {isPublishing && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                     {isPublishing ? 'Publishing...' : 'Publish Post'}
                   </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
+            )}
           </div>
 
           <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
-            {posts.map((post, index) => (
-              <Card key={index} className="flex flex-col overflow-hidden rounded-xl border transition-all hover:-translate-y-1 hover:shadow-xl hover:border-primary">
-                <CardHeader>
-                  <CardTitle className="text-xl h-16">{post.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow">
-                  <CardDescription>{post.description}</CardDescription>
-                </CardContent>
-                <CardFooter className="text-sm text-muted-foreground flex justify-between">
-                  <div className="flex items-center gap-2">
-                    <User className="h-4 w-4" />
-                    <span>{post.author}</span>
-                  </div>
-                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    <span>{post.date}</span>
-                  </div>
-                </CardFooter>
-              </Card>
-            ))}
+            {isLoading ? (
+              Array.from({ length: 3 }).map((_, index) => (
+                <Skeleton key={index} className="h-64 w-full" />
+              ))
+            ) : posts && posts.length > 0 ? (
+              posts.map((post) => (
+                <Card key={post.id} className="flex flex-col overflow-hidden rounded-xl border transition-all hover:-translate-y-1 hover:shadow-xl hover:border-primary">
+                  <CardHeader>
+                    <CardTitle className="text-xl h-16">{post.title}</CardTitle>
+                    {user?.uid === post.authorId && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute top-2 right-2 h-8 w-8 text-muted-foreground hover:text-destructive"
+                          onClick={() => handleDeletePost(post.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                    )}
+                  </CardHeader>
+                  <CardContent className="flex-grow">
+                    <CardDescription>{post.description}</CardDescription>
+                  </CardContent>
+                  <CardFooter className="text-sm text-muted-foreground flex justify-between">
+                    <div className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      <span>{post.author}</span>
+                    </div>
+                     <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      <span>
+                        {post.createdAt?.toDate ? format(post.createdAt.toDate(), 'PPP') : 'Just now'}
+                      </span>
+                    </div>
+                  </CardFooter>
+                </Card>
+              ))
+            ) : (
+              <div className="col-span-full text-center py-20 bg-card rounded-lg border-2 border-dashed">
+                <h2 className="text-xl font-semibold">No Blog Posts Yet</h2>
+                <p className="text-muted-foreground mt-2">{user ? 'Click "Add New Post" to get started.' : 'Be the first to write a post!'}</p>
+              </div>
+            )}
           </div>
         </div>
       </main>

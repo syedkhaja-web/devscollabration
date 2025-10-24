@@ -7,32 +7,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Link from 'next/link';
 import { SiteHeader } from '@/components/site-header';
 import { DevsTecIcon } from '@/components/icons';
-import { auth } from '@/lib/firebase';
-import { onAuthStateChanged, signInAnonymously, signOut, User } from 'firebase/auth';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useUser, useAuth } from '@/firebase';
+import { signInAnonymously, signOut } from 'firebase/auth';
 
 export default function LoginPage() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
   const [actionLoading, setActionLoading] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
   const handleSignIn = async () => {
+    if (!auth) return;
     setActionLoading(true);
     try {
       await signInAnonymously(auth);
     } catch (error: any) {
       console.error("Failed to sign in:", error);
-      if (error.code === 'auth/admin-restricted-operation') {
+      if (error.code === 'auth/operation-not-allowed') {
         toast({
             title: "Sign-In Failed",
             description: "Anonymous Sign-In is not enabled in the Firebase Console.",
@@ -51,6 +44,7 @@ export default function LoginPage() {
   };
 
   const handleSignOut = async () => {
+    if (!auth) return;
     setActionLoading(true);
     try {
       await signOut(auth);
@@ -61,7 +55,7 @@ export default function LoginPage() {
     }
   };
 
-  if (loading) {
+  if (isUserLoading) {
     return (
       <div className="flex min-h-dvh flex-col">
         <SiteHeader />
@@ -85,14 +79,14 @@ export default function LoginPage() {
               <>
                 <CardTitle className="text-2xl">You are signed in</CardTitle>
                 <CardDescription>
-                  You can now explore the platform. Ready to sign out?
+                  Welcome! You can now explore the platform.
                 </CardDescription>
               </>
             ) : (
               <>
                 <CardTitle className="text-2xl">Launch the Application</CardTitle>
                 <CardDescription>
-                  Click the button below to start your session and explore the platform.
+                  Sign in anonymously to start your session and explore the platform.
                 </CardDescription>
               </>
             )}
@@ -111,7 +105,7 @@ export default function LoginPage() {
             ) : (
               <Button onClick={handleSignIn} size="lg" disabled={actionLoading}>
                 {actionLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                Sign In
+                Sign In Anonymously
               </Button>
             )}
           </CardContent>

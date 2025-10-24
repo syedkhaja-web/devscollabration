@@ -6,15 +6,15 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { DevsTecIcon } from '@/components/icons';
 import { Menu, X, LogOut, LogIn } from 'lucide-react';
-import { onAuthStateChanged, User, signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { useUser, useAuth } from '@/firebase';
+import { signOut } from 'firebase/auth';
 import { usePathname, useRouter } from 'next/navigation';
 
 
 export function SiteHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
   const [clientLoaded, setClientLoaded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -27,18 +27,14 @@ export function SiteHeader() {
       }
     };
     window.addEventListener('resize', handleResize);
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-        setUser(currentUser);
-        setLoading(false);
-    });
-
+    
     return () => {
         window.removeEventListener('resize', handleResize);
-        unsubscribe();
     }
   }, []);
 
   const handleSignOut = async () => {
+    if (!auth) return;
     await signOut(auth);
     router.push('/login');
   };
@@ -55,10 +51,10 @@ export function SiteHeader() {
     { href: '/deploy', label: 'Deploy' },
   ];
 
-  const navLinks = loading ? [] : baseNavLinks;
+  const navLinks = isUserLoading ? [] : baseNavLinks;
   
   const AuthButton = () => {
-    if (loading || !clientLoaded) return null;
+    if (isUserLoading || !clientLoaded) return null;
 
     if (user) {
       return (
@@ -68,8 +64,14 @@ export function SiteHeader() {
         </Button>
       )
     }
-    // Don't show sign-in button
-    return null;
+    return (
+        <Button variant="ghost" size="sm" asChild>
+            <Link href="/login">
+                <LogIn className="mr-2" />
+                Sign In
+            </Link>
+        </Button>
+    );
   }
 
 
