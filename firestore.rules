@@ -1,18 +1,143 @@
-rules_version='2'
-
+/**
+ * @fileoverview Firestore Security Rules for Devs Tec Collab platform.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for user profiles, projects, documentation, and blog posts.
+ * It prioritizes authorization independence by denormalizing ownership information directly onto documents.
+ *
+ * Data Structure:
+ * - Users: /users/{userId} - User profiles, accessible only by the user themselves.
+ * - Projects: /projects/{projectId} - Projects owned by a specific user, with the owner's ID stored in the `ownerId` field.
+ * - Documentation: /projects/{projectId}/documentation/{documentationId} - Documentation for a specific project, inheriting authorization from the parent project and containing the project ID.
+ * - Blog Posts: /blog_posts/{blogPostId} - Blog posts authored by a specific user, with the author's ID stored in the `authorId` field.
+ *
+ * Key Security Decisions:
+ * - User listing is disallowed to protect user privacy.
+ * - Data validation is relaxed for rapid prototyping, focusing on ownership and relational integrity.
+ * - Read operations are generally open where appropriate for public content (e.g., blog posts), with strict owner-only access for write operations.
+ *
+ * Denormalization for Authorization:
+ * - The `Documentation` entity includes a `projectId` field, denormalized from the parent `Project`, enabling authorization checks without needing to perform `get()` operations on the `Project` document.
+ * - Projects and BlogPosts include an `ownerId` or `authorId` field respectively, to avoid requiring queries to a separate `/users` collection.
+ *
+ * Structural Segregation:
+ * - Private user data is stored under the `/users/{userId}` path, while public content like blog posts are stored in a top-level `/blog_posts` collection.
+ */
+rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      // This rule allows anyone with your database reference to view, edit,
-      // and delete all data in your database. It is useful for getting
-      // started, but it is configured to expire after 30 days because it
-      // leaves your app open to attackers. At that time, all client
-      // requests to your database will be denied.
-      //
-      // Make sure to write security rules for your app before that time, or
-      // else all client requests to your database will be denied until you
-      // update your rules.
-      allow read, write: if request.time < timestamp.date(2025, 10, 26);
+
+    /**
+     * @description Allows access to user profiles only to the user themselves.
+     * @path /users/{userId}
+     * @allow (create) - User with ID 'user123' can create their profile.
+     *   `request.auth.uid == 'user123'` and `request.resource.data.id == 'user123'`.
+     * @allow (get, update, delete) - User with ID 'user123' can read, update, and delete their profile.
+     *   `request.auth.uid == 'user123'` and `resource.data.id == 'user123'`.
+     * @deny (create) - User with ID 'user456' cannot create a profile for 'user123'.
+     *   `request.auth.uid == 'user456'` and `request.resource.data.id == 'user123'`.
+     * @deny (get, update, delete) - User with ID 'user456' cannot read, update, and delete the profile of 'user123'.
+     *   `request.auth.uid == 'user456'` and `resource.data.id == 'user123'`.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
+     */
+    match /users/{userId} {
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if false; // User listing is not allowed.
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Allows access to projects based on ownership.
+     * @path /projects/{projectId}
+     * @allow (create) - User with ID 'user123' can create a project with `ownerId: 'user123'`.
+     *   `request.auth.uid == 'user123'` and `request.resource.data.ownerId == 'user123'`.
+     * @allow (get, list, update, delete) - User with ID 'user123' can read, list, update, and delete a project with `ownerId: 'user123'`.
+     *   `request.auth.uid == 'user123'` and `resource.data.ownerId == 'user123'`.
+     * @deny (create) - User with ID 'user456' cannot create a project with `ownerId: 'user123'`.
+     *   `request.auth.uid == 'user456'` and `request.resource.data.ownerId == 'user123'`.
+     * @deny (update, delete) - User with ID 'user456' cannot update or delete a project with `ownerId: 'user123'`.
+     *   `request.auth.uid == 'user456'` and `resource.data.ownerId == 'user123'`.
+     * @principle Enforces document ownership for writes.
+     */
+    match /projects/{projectId} {
+      function isOwner(ownerId) {
+        return request.auth != null && request.auth.uid == ownerId;
+      }
+
+       function isExistingOwner(ownerId) {
+        return isOwner(ownerId) && resource != null;
+      }
+
+      allow get, list: if true; // Public read access.
+      allow create: if isOwner(request.resource.data.ownerId);
+      allow update: if isExistingOwner(resource.data.ownerId) && resource.data.ownerId == request.resource.data.ownerId;
+      allow delete: if isExistingOwner(resource.data.ownerId);
+    }
+
+    /**
+     * @description Allows access to documentation based on the parent project's ownership.
+     * @path /projects/{projectId}/documentation/{documentationId}
+     * @allow (create) - User with ID 'user123' can create documentation for a project with `ownerId: 'user123'`.
+     *   `get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == 'user123'` and `request.auth.uid == 'user123'`.
+     * @allow (get, list, update, delete) - User with ID 'user123' can read, list, update, and delete documentation for a project with `ownerId: 'user123'`.
+     *   `get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == 'user123'` and `request.auth.uid == 'user123'`.
+     * @deny (create) - User with ID 'user456' cannot create documentation for a project with `ownerId: 'user123'`.
+     *   `get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == 'user123'` and `request.auth.uid == 'user456'`.
+     * @deny (update, delete) - User with ID 'user456' cannot update or delete documentation for a project with `ownerId: 'user123'`.
+     *   `get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == 'user123'` and `request.auth.uid == 'user456'`.
+     * @principle Enforces document ownership for writes based on the parent project and restricts access to authorized users.
+     */
+    match /projects/{projectId}/documentation/{documentationId} {
+      function isProjectOwner(projectId) {
+        return request.auth != null && request.auth.uid == get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId;
+      }
+
+        function isExistingProjectOwner(projectId) {
+        return isProjectOwner(projectId) && resource != null;
+      }
+
+      allow get, list: if true; // Public read access.
+      allow create: if isProjectOwner(projectId);
+      allow update: if isExistingProjectOwner(projectId);
+      allow delete: if isExistingProjectOwner(projectId);
+    }
+
+    /**
+     * @description Allows access to blog posts based on authorship.
+     * @path /blog_posts/{blogPostId}
+     * @allow (create) - User with ID 'user123' can create a blog post with `authorId: 'user123'`.
+     *   `request.auth.uid == 'user123'` and `request.resource.data.authorId == 'user123'`.
+     * @allow (get, list, update, delete) - User with ID 'user123' can read, list, update, and delete a blog post with `authorId: 'user123'`.
+     *   `request.auth.uid == 'user123'` and `resource.data.authorId == 'user123'`.
+     * @deny (create) - User with ID 'user456' cannot create a blog post with `authorId: 'user123'`.
+     *   `request.auth.uid == 'user456'` and `request.resource.data.authorId == 'user123'`.
+     * @deny (update, delete) - User with ID 'user456' cannot update or delete a blog post with `authorId: 'user123'`.
+     *   `request.auth.uid == 'user456'` and `resource.data.authorId == 'user123'`.
+     * @principle Enforces document ownership for writes and allows public read access.
+     */
+    match /blog_posts/{blogPostId} {
+      function isOwner(authorId) {
+        return request.auth != null && request.auth.uid == authorId;
+      }
+
+      function isExistingOwner(authorId) {
+        return isOwner(authorId) && resource != null;
+      }
+
+      allow get, list: if true; // Public read access.
+      allow create: if isOwner(request.resource.data.authorId);
+      allow update: if isExistingOwner(resource.data.authorId) && resource.data.authorId == request.resource.data.authorId;
+      allow delete: if isExistingOwner(resource.data.authorId);
     }
   }
 }

@@ -1,0 +1,257 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the Devs Tec Collab platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
+        "username": {
+          "type": "string",
+          "description": "The user's chosen username.",
+          "format": "string"
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address.",
+          "format": "email"
+        },
+        "joinDate": {
+          "type": "string",
+          "description": "The date and time when the user joined the platform.",
+          "format": "date-time"
+        },
+        "profilePictureUrl": {
+          "type": "string",
+          "description": "URL of the user's profile picture.",
+          "format": "uri"
+        },
+        "bio": {
+          "type": "string",
+          "description": "A short biography or description of the user."
+        }
+      },
+      "required": [
+        "id",
+        "username",
+        "email",
+        "joinDate"
+      ]
+    },
+    "Project": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Project",
+      "type": "object",
+      "description": "Represents a project hosted on the Devs Tec Collab platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the project entity."
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Project) The user ID of the project owner."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the project."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the project."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "The date and time when the project was created.",
+          "format": "date-time"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "The date and time when the project was last updated.",
+          "format": "date-time"
+        },
+        "repositoryUrl": {
+          "type": "string",
+          "description": "The URL of the project's repository.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "ownerId",
+        "name",
+        "createdAt",
+        "lastUpdated",
+        "repositoryUrl"
+      ]
+    },
+    "Documentation": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Documentation",
+      "type": "object",
+      "description": "Represents a documentation article or page.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the documentation entity."
+        },
+        "projectId": {
+          "type": "string",
+          "description": "Reference to Project. (Relationship: Project 1:N Documentation) The project ID this documentation belongs to."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the documentation article."
+        },
+        "content": {
+          "type": "string",
+          "description": "The content of the documentation article (e.g., Markdown or HTML)."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "The date and time when the documentation was created.",
+          "format": "date-time"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "description": "The date and time when the documentation was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "title",
+        "content",
+        "createdAt",
+        "lastUpdated"
+      ]
+    },
+    "BlogPost": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "BlogPost",
+      "type": "object",
+      "description": "Represents a blog post on the Devs Tec Collab platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the blog post entity."
+        },
+        "authorId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N BlogPost) The user ID of the blog post author."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the blog post."
+        },
+        "content": {
+          "type": "string",
+          "description": "The content of the blog post (e.g., Markdown or HTML)."
+        },
+        "publishDate": {
+          "type": "string",
+          "description": "The date and time when the blog post was published.",
+          "format": "date-time"
+        },
+        "tags": {
+          "type": "array",
+          "description": "Tags associated with the blog post.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "authorId",
+        "title",
+        "content",
+        "publishDate"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. Path-based ownership ensures only the user can access their data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/projects/{projectId}",
+        "definition": {
+          "entityName": "Project",
+          "schema": {
+            "$ref": "#/backend/entities/Project"
+          },
+          "description": "Stores project information.  Includes 'ownerId' for authorization.",
+          "params": [
+            {
+              "name": "projectId",
+              "description": "The unique identifier of the project."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/projects/{projectId}/documentation/{documentationId}",
+        "definition": {
+          "entityName": "Documentation",
+          "schema": {
+            "$ref": "#/backend/entities/Documentation"
+          },
+          "description": "Stores documentation articles for each project. Includes 'projectId' (Denormalization from parent 'Project') for authorization independence.",
+          "params": [
+            {
+              "name": "projectId",
+              "description": "The unique identifier of the project."
+            },
+            {
+              "name": "documentationId",
+              "description": "The unique identifier of the documentation."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/blog_posts/{blogPostId}",
+        "definition": {
+          "entityName": "BlogPost",
+          "schema": {
+            "$ref": "#/backend/entities/BlogPost"
+          },
+          "description": "Stores blog posts. Includes 'authorId' for authorization.",
+          "params": [
+            {
+              "name": "blogPostId",
+              "description": "The unique identifier of the blog post."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to support the 'Devs Tec Collab' platform, focusing on projects, documentation, and blog posts. It prioritizes authorization independence and simplicity in security rules.\n\n**Authorization Independence:**\n\n*   Ownership of projects and blog posts is explicitly defined using the `ownerId` and `authorId` fields respectively. This avoids the need for complex security rules that traverse the data hierarchy.\n*   Documentation, being a subcollection of Projects, inherits authorization context by including the `projectId`. This allows checking project ownership when accessing documentation without needing to perform `get()` operations on the parent project.\n\n**QAPs Support:**\n\n*   User data is stored in a path-based structure (`/users/{userId}`) which secures private user data.\n*   Projects and BlogPosts are stored in collections (`/projects` and `/blog_posts`), facilitating secure list operations that are scoped by the `ownerId` or `authorId`.\n\nThe structure uses explicit state modeling, consistent naming, and predictable schemas to enhance clarity and debuggability."
+  }
+}
