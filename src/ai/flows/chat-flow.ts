@@ -1,37 +1,48 @@
-
 'use server';
 /**
- * @fileOverview A chatbot AI flow.
- * 
- * - chat - A function that handles the chatbot conversation.
+ * @fileOverview A simple chat flow that uses Gemini to generate responses.
+ *
+ * - chat - A function that takes a message history and a new message, and returns the AI's response.
  */
+import {ai} from '@/ai/genkit';
+import {ChatHistorySchema, ChatMessageSchema} from './chat-schemas';
+import {z} from 'zod';
 
-import { ai } from '@/ai/genkit';
-import { ChatInputSchema, ChatOutputSchema, type ChatInput, type ChatOutput } from './chat-schemas';
+const ChatInputSchema = z.object({
+  history: ChatHistorySchema,
+  message: z.string(),
+});
 
-const chatFlow = ai.defineFlow(
-  {
-    name: 'chatFlow',
-    inputSchema: ChatInputSchema,
-    outputSchema: ChatOutputSchema,
-  },
-  async (input) => {
-    const { history, message } = input;
+const ChatOutputSchema = z.object({
+  response: z.string(),
+});
 
-    const chatHistory = history.map((msg) => ({
-      role: msg.role,
-      content: [{ text: msg.content }],
-    }));
+export async function chat(input: {
+  history: z.infer<typeof ChatHistorySchema>;
+  message: string;
+}): Promise<z.infer<typeof ChatOutputSchema>> {
+  // Construct a system prompt to guide the AI.
+  const systemPrompt = `You are a helpful AI assistant for a software development platform called Devs Tec.
+Your role is to assist users with questions about the platform, help them with coding problems,
+and provide information about software development best practices.
 
-    const response = await ai.generate({
-      prompt: message,
-      history: chatHistory,
-    });
+Keep your responses concise and helpful.`;
 
-    return { response: response.text };
-  }
-);
+  // Prepend the system prompt to the chat history.
+  const historyWithSystemPrompt: z.infer<typeof ChatMessageSchema>[] = [
+    {role: 'system', content: systemPrompt},
+    ...input.history,
+  ];
 
-export async function chat(input: ChatInput): Promise<ChatOutput> {
-  return chatFlow(input);
+  const {text} = await ai.generate({
+    prompt: [
+      ...historyWithSystemPrompt.map(msg => ({
+        role: msg.role,
+        content: [{text: msg.content}],
+      })),
+      {role: 'user', content: [{text: input.message}]},
+    ],
+  });
+
+  return {response: text};
 }
